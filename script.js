@@ -33,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Daily Goal Elements
   const dailyGoalInput = document.getElementById("daily-goal-input"); // Added
 
+  // Quotes Elements
+  const quoteTextElement = document.getElementById("quote-text"); // <-- Add
+  const quoteAuthorElement = document.getElementById("quote-author"); // <-- Add
+  const newQuoteBtn = document.getElementById("new-quote-btn"); // <-- Add
+
   // Pomodoro Elements
   const pomodoroTimeElement = document.getElementById("pomodoro-time");
   const pomodoroStatusElement = document.getElementById("pomodoro-status");
@@ -989,7 +994,114 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   initWeather();
 
-  // 9. Dark Mode Toggle & Persistence
+  // 9. Quotes
+
+  // NEW: Predefined array of quotes
+  const QUOTES = [
+    {
+      text: "The function of good software is to make the complex appear to be simple.",
+      author: "Grady Booch",
+    },
+    {
+      text: "Programs must be written for people to read, and only incidentally for machines to execute.",
+      author: "Harold Abelson",
+    },
+    {
+      text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      author: "Martin Fowler",
+    },
+    {
+      text: "First, solve the problem. Then, write the code.",
+      author: "John Johnson",
+    },
+    {
+      text: "Experience is the name everyone gives to their mistakes.",
+      author: "Oscar Wilde",
+    },
+    {
+      text: "Code is like humor. When you have to explain it, it’s bad.",
+      author: "Cory House",
+    },
+    { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+    {
+      text: "Java is to JavaScript what Car is to Carpet.",
+      author: "Chris Heilmann",
+    },
+    {
+      text: "Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday’s code.",
+      author: "Dan Salomon",
+    },
+    {
+      text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
+      author: "Antoine de Saint-Exupery",
+    },
+    {
+      text: "The best way to predict the future is to invent it.",
+      author: "Alan Kay",
+    },
+    {
+      text: "Walking on water and developing software from a specification are easy if both are frozen.",
+      author: "Edward V Berard",
+    },
+    {
+      text: "It’s not a bug – it’s an undocumented feature.",
+      author: "Anonymous",
+    },
+    {
+      text: "There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies.",
+      author: "C.A.R. Hoare",
+    },
+    { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+  ];
+
+  let lastQuoteIndex = -1; // Keep track of the last shown quote index
+
+  // NEW: Quote Widget Functionality
+  function displayNewQuote() {
+    if (!quoteTextElement || !quoteAuthorElement || QUOTES.length === 0) {
+      console.warn("Quote elements not found or no quotes available.");
+      if (quoteTextElement)
+        quoteTextElement.textContent = "Could not load quote.";
+      if (quoteAuthorElement) quoteAuthorElement.textContent = "";
+      return;
+    }
+
+    let randomIndex;
+    // Prevent showing the same quote twice in a row if there are multiple quotes
+    do {
+      randomIndex = Math.floor(Math.random() * QUOTES.length);
+    } while (QUOTES.length > 1 && randomIndex === lastQuoteIndex);
+
+    lastQuoteIndex = randomIndex; // Update the last shown index
+    const randomQuote = QUOTES[randomIndex];
+
+    quoteTextElement.textContent = randomQuote.text;
+    quoteAuthorElement.textContent = randomQuote.author || "Unknown"; // Handle missing author
+  }
+
+  // --- Event Listeners (Add/Modify) ---
+  // ... (existing listeners)
+
+  // NEW: Add listener for the new quote button
+  if (newQuoteBtn) {
+    newQuoteBtn.addEventListener("click", displayNewQuote);
+  }
+
+  // --- Initialization ---
+  // ... (load other things) ...
+  renderShortcuts();
+  loadTasks();
+  // load Pomodoro initial state
+  switchPomodoroMode("work"); // Or however you initialize it
+  initWeather();
+  loadUserName();
+  loadDailyGoal();
+  applyTheme(getLocalStorage("devHomeTheme", "light")); // Or your theme init logic
+  // ... (apply background, etc.)
+
+  displayNewQuote(); // <<< Call this function on page load to show initial quote
+
+  // 10. Dark Mode Toggle & Persistence
   function applyTheme(theme) {
     if (theme === "dark") {
       document.documentElement.setAttribute("data-theme", "dark");
@@ -1023,7 +1135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-  // 10. Settings Modal Logic
+  // 11. Settings Modal Logic
   if (settingsBtn)
     settingsBtn.addEventListener("click", () => {
       if (settingsModal) settingsModal.style.display = "block";
@@ -1046,7 +1158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 11. Background Customization
+  // 12. Background Customization
   function renderBackgroundInputs(type) {
     if (!bgValueContainer) return; // Add check
     bgValueContainer.innerHTML = "";
@@ -1158,7 +1270,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.backgroundColor = "var(--bg-color)";
   }
 
-  // 12. Combined Keyboard Shortcuts Listener
+  // 13. Combined Keyboard Shortcuts Listener
   document.addEventListener("keydown", (e) => {
     const activeEl = document.activeElement;
     const isInputFocused =
@@ -1222,7 +1334,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 13. Reset Settings
+  // 14. Reset Settings
   if (resetSettingsBtn)
     resetSettingsBtn.addEventListener("click", () => {
       if (
