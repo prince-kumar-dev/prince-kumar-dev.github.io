@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let dailyGoal = { text: '', date: '' }; // Added
 
     // Pomodoro State
-    const POMODORO_TIMES = { work: 25 * 60, shortBreak: 0.1 * 60, longBreak: 15 * 60 }; // Seconds
+    const POMODORO_TIMES = { work: 25 * 60, shortBreak: 1 * 60, longBreak: 15 * 60 }; // Seconds
     let pomodoroInterval = null;
     let pomodoroTimeLeft = POMODORO_TIMES.work;
     let pomodoroCurrentMode = 'work'; // 'work', 'shortBreak', 'longBreak'
