@@ -7,7 +7,8 @@
     <title>Dev Home</title>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="code.png" type="image/png">
+    <!-- Optional: Add Favicon -->
+    <link rel="icon" href="code.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,7 +18,8 @@
 
         <!-- Top Controls -->
         <div class="top-controls">
-             <button id="settings-btn" class="icon-btn" aria-label="Settings" title="Settings"><i class="fas fa-cog"></i></button>
+            <button id="settings-btn" class="icon-btn" aria-label="Settings" title="Settings"><i
+                    class="fas fa-cog"></i></button>
             <div class="theme-switch-wrapper" title="Toggle Theme">
                 <label class="theme-switch" for="theme-checkbox">
                     <input type="checkbox" id="theme-checkbox" />
@@ -46,13 +48,17 @@
             <div class="search-container">
                 <form id="search-form">
                     <select id="search-engine" title="Select Search Engine">
-                        <option value="https://www.google.com/search?q=" data-suggest-url="https://suggestqueries.google.com/complete/search?client=firefox&q=">Google</option>
-                        <option value="https://duckduckgo.com/?q=" data-suggest-url="https://duckduckgo.com/ac/?q=">DuckDuckGo</option>
+                        <option value="https://www.google.com/search?q="
+                            data-suggest-url="https://suggestqueries.google.com/complete/search?client=firefox&q=">
+                            Google</option>
+                        <option value="https://duckduckgo.com/?q=" data-suggest-url="https://duckduckgo.com/ac/?q=">
+                            DuckDuckGo</option>
                         <option value="https://developer.mozilla.org/en-US/search?q=">MDN</option>
                         <option value="https://github.com/search?q=">GitHub</option>
                         <option value="https://stackoverflow.com/search?q=">Stack O.</option>
                     </select>
-                    <input type="text" id="search-input" placeholder="Search..." autocomplete="off" title="Press '/' to focus search">
+                    <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
+                        title="Press '/' to focus search">
                     <button type="submit" aria-label="Search" title="Search"><i class="fas fa-search"></i></button>
                 </form>
                 <div id="suggestions-container" class="suggestions-list"></div>
@@ -63,8 +69,8 @@
                 <!-- Shortcuts will be loaded here by JavaScript -->
             </div>
 
-             <!-- Widgets Area -->
-             <div class="widgets-area">
+            <!-- Widgets Area -->
+            <div class="widgets-area">
 
                 <!-- Task List Widget (Enhanced) -->
                 <div class="widget task-list-widget">
@@ -83,9 +89,20 @@
                         <span id="pomodoro-time">25:00</span>
                         <span id="pomodoro-status">Ready</span>
                     </div>
+    
+                    <div class="pomodoro-alarm-controls">
+                        <button id="pomodoro-pause-alarm" title="Pause Alarm Sound"><i class="fas fa-volume-mute"></i>
+                            Pause Alarm</button>
+                        <button id="pomodoro-stop-alarm" title="Stop Alarm Sound & Cancel Next Mode"><i
+                                class="fas fa-stop-circle"></i> Stop Alarm</button>
+                    </div>
+                    <audio id="pomodoro-alarm-sound" src="alarm.mp3" preload="auto"></audio>
+
                     <div class="pomodoro-controls">
-                        <button id="pomodoro-start-pause" class="pomodoro-btn" title="Start/Pause Timer"><i class="fas fa-play"></i></button>
-                        <button id="pomodoro-reset" class="pomodoro-btn" title="Reset Timer"><i class="fas fa-redo-alt"></i></button>
+                        <button id="pomodoro-start-pause" class="pomodoro-btn" title="Start/Pause Timer"><i
+                                class="fas fa-play"></i></button>
+                        <button id="pomodoro-reset" class="pomodoro-btn" title="Reset Timer"><i
+                                class="fas fa-redo-alt"></i></button>
                     </div>
                     <div class="pomodoro-modes">
                         <button data-mode="work" class="mode-btn active" title="Work Session (25 min)">Work</button>
@@ -100,7 +117,7 @@
                     <div id="weather-info">Loading...</div>
                 </div>
 
-             </div>
+            </div>
 
         </main> <!-- End Main Content -->
 
@@ -112,10 +129,10 @@
             <span class="close-btn" title="Close Settings">×</span>
             <h2>Settings</h2>
 
-             <div class="setting-section"> <!-- Moved General section up -->
+            <div class="setting-section"> <!-- Moved General section up -->
                 <h3>General</h3>
-                 <label for="user-name-input">Your Name (for greeting):</label>
-                 <input type="text" id="user-name-input" placeholder="Enter your name">
+                <label for="user-name-input">Your Name (for greeting):</label>
+                <input type="text" id="user-name-input" placeholder="Enter your name">
             </div>
 
             <div class="setting-section">
@@ -126,30 +143,31 @@
                 <div class="add-shortcut-form">
                     <input type="text" id="new-shortcut-name" placeholder="Name (e.g., GitHub)">
                     <input type="url" id="new-shortcut-url" placeholder="URL (e.g., https://github.com)">
-                    <input type="text" id="new-shortcut-icon" placeholder="Icon (Font Awesome class, e.g., fab fa-github)">
+                    <input type="text" id="new-shortcut-icon"
+                        placeholder="Icon (Font Awesome class, e.g., fab fa-github)">
                     <button id="add-shortcut-btn">Add Shortcut</button>
                 </div>
             </div>
 
-             <div class="setting-section">
+            <div class="setting-section">
                 <h3>Background</h3>
-                 <label for="bg-type">Type:</label>
-                 <select id="bg-type">
-                     <option value="color">Solid Color</option>
-                     <option value="gradient">Gradient</option>
-                     <option value="image">Image URL</option>
-                 </select>
-                 <div id="bg-value-input">
+                <label for="bg-type">Type:</label>
+                <select id="bg-type">
+                    <option value="color">Solid Color</option>
+                    <option value="gradient">Gradient</option>
+                    <option value="image">Image URL</option>
+                </select>
+                <div id="bg-value-input">
                     <!-- Input field generated by JS based on selection -->
-                     <input type="color" id="bg-color-input" value="#f8f9fa"> <!-- Default for color -->
-                 </div>
-                 <button id="apply-bg-btn">Apply Background</button>
+                    <input type="color" id="bg-color-input" value="#f8f9fa"> <!-- Default for color -->
+                </div>
+                <button id="apply-bg-btn">Apply Background</button>
             </div>
 
-             <div class="setting-section"> <!-- Moved Reset section down -->
+            <div class="setting-section"> <!-- Moved Reset section down -->
                 <h3>Reset</h3>
                 <button id="reset-settings-btn">Reset All Settings</button>
-             </div>
+            </div>
         </div>
     </div>
 
