@@ -111,12 +111,29 @@
                     </div>
                 </div>
 
-                <!-- Weather Widget -->
-                <div class="widget weather-widget">
-                    <h3>Weather</h3>
-                    <div id="weather-info">Loading...</div>
-                </div>
 
+                <div class="widget weather-quote-widget"> <!-- Added a combined class -->
+                    <h3>Weather</h3>
+
+                    <!-- Area for Current Weather -->
+                    <div id="weather-info">Loading current weather...</div>
+
+                    <!-- Area for Quote (Moved Here) -->
+                    <div class="quote-area">
+                        <blockquote id="quote-text">Loading quote...</blockquote>
+                        <div class="quote-footer">
+                            <cite id="quote-author"></cite>
+                            <button id="new-quote-btn" class="quote-refresh-btn" title="Get a New Quote">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Area for Forecast -->
+                    <div id="weather-forecast-container" class="weather-forecast-container">
+                        <!-- Forecast items will be added here by JS -->
+                    </div>
+                </div>
             </div>
 
         </main> <!-- End Main Content -->
