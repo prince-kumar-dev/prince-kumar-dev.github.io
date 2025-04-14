@@ -1,1295 +1,1356 @@
-/* --- Fonts --- */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+// --- START OF EMBEDDED JAVASCRIPT ---
+document.addEventListener("DOMContentLoaded", () => {
+  // --- DOM Elements (Add/Modify) ---
+  const clockElement = document.getElementById("clock");
+  const dateElement = document.getElementById("date");
+  const greetingElement = document.getElementById("greeting"); // Added
+  const searchForm = document.getElementById("search-form");
+  const searchInput = document.getElementById("search-input");
+  const searchEngineSelect = document.getElementById("search-engine");
+  const suggestionsContainer = document.getElementById("suggestions-container");
+  const shortcutsContainer = document.getElementById("shortcuts-container");
+  const weatherInfoElement = document.getElementById("weather-info");
+  const themeCheckbox = document.getElementById("theme-checkbox");
+  const settingsBtn = document.getElementById("settings-btn");
+  const settingsModal = document.getElementById("settings-modal");
+  const closeModalBtn = settingsModal.querySelector(".close-btn");
+  const modalShortcutsList = document.getElementById("modal-shortcuts-list");
+  const addShortcutBtn = document.getElementById("add-shortcut-btn");
+  const newShortcutNameInput = document.getElementById("new-shortcut-name");
+  const newShortcutUrlInput = document.getElementById("new-shortcut-url");
+  const newShortcutIconInput = document.getElementById("new-shortcut-icon");
+  const resetSettingsBtn = document.getElementById("reset-settings-btn");
+  const bgTypeSelect = document.getElementById("bg-type");
+  const bgValueContainer = document.getElementById("bg-value-input");
+  const applyBgBtn = document.getElementById("apply-bg-btn");
+  const userNameInput = document.getElementById("user-name-input"); // Added
 
-/* --- Root Variables --- */
-:root {
-  --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  --font-quote: "Inter", sans-serif;
+  // Task List Elements
+  const taskListUl = document.getElementById("task-list"); // Added
+  const newTaskInput = document.getElementById("new-task-input"); // Added
+  const addTaskBtn = document.getElementById("add-task-btn"); // Added
 
-  /* Light Theme */
-  --bg-color-light: #f8f9fa;
-  --widget-bg-light: #ffffff;
-  --text-color-light: #212529;
-  --text-muted-light: #6c757d;
-  --border-color-light: #dee2e6;
-  --accent-color-light: #4a90e2;
-  --accent-color-rgb-light: 74, 144, 226;
-  --input-bg-light: #ffffff;
-  --input-border-light: #ced4da;
-  --weather-bg-light: rgba(255, 255, 255, 0.75); /* Adjusted alpha */
-  --task-completed-light: #d4edda;
-  --pomodoro-btn-bg-light: #e9ecef;
-  --widget-bg-rgb-light: 255, 255, 255; /* Added RGB */
-  --border-color-rgb-light: 222, 226, 230; /* Added RGB */
+  // Daily Goal Elements
+  const dailyGoalInput = document.getElementById("daily-goal-input"); // Added
 
-  /* Dark Theme */
-  --bg-color-dark: #16181a;
-  --widget-bg-dark: #212427;
-  --text-color-dark: #e9ecef;
-  --text-muted-dark: #adb5bd;
-  --border-color-dark: #495057;
-  --accent-color-dark: #5da9f2;
-  --accent-color-rgb-dark: 93, 169, 242;
-  --input-bg-dark: #2c3034;
-  --input-border-dark: #5a6168;
-  --weather-bg-dark: rgba(33, 36, 39, 0.75); /* Adjusted alpha */
-  --task-completed-dark: #2a3b2f;
-  --pomodoro-btn-bg-dark: #343a40;
-  --widget-bg-rgb-dark: 33, 36, 39; /* Added RGB */
-  --border-color-rgb-dark: 73, 80, 87; /* Added RGB */
+  // Quotes Elements
+  const quoteTextElement = document.getElementById("quote-text"); // <-- Add
+  const quoteAuthorElement = document.getElementById("quote-author"); // <-- Add
+  const newQuoteBtn = document.getElementById("new-quote-btn"); // <-- Add
 
-  /* Refined Shadows */
-  --shadow-light: rgba(0, 0, 0, 0.05);
-  --shadow-hover-light: rgba(0, 0, 0, 0.08);
-  --shadow-focus-light: rgba(var(--accent-color-rgb-light), 0.2);
-  --shadow-widget-light: 0 4px 12px var(--shadow-light);
-  --shadow-widget-hover-light: 0 6px 18px var(--shadow-hover-light);
+  // Pomodoro Elements
+  const pomodoroTimeElement = document.getElementById("pomodoro-time");
+  const pomodoroStatusElement = document.getElementById("pomodoro-status");
+  const pomodoroStartPauseBtn = document.getElementById("pomodoro-start-pause");
+  const pomodoroResetBtn = document.getElementById("pomodoro-reset");
+  const pomodoroModeBtns = document.querySelectorAll(".mode-btn");
+  const pomodoroAlarmSound = document.getElementById("pomodoro-alarm-sound");
+  const pomodoroAlarmControls = document.querySelector(
+    ".pomodoro-alarm-controls"
+  ); // <-- Get controls container
+  const pomodoroPauseAlarmBtn = document.getElementById("pomodoro-pause-alarm"); // <-- Get pause button
+  const pomodoroStopAlarmBtn = document.getElementById("pomodoro-stop-alarm"); // <-- Get stop button
 
-  --shadow-dark: rgba(0, 0, 0, 0.15);
-  --shadow-hover-dark: rgba(0, 0, 0, 0.25);
-  --shadow-focus-dark: rgba(var(--accent-color-rgb-dark), 0.25);
-  --shadow-widget-dark: 0 4px 15px var(--shadow-dark);
-  --shadow-widget-hover-dark: 0 6px 20px var(--shadow-hover-dark);
+  // --- Default Data & State (Add/Modify) ---
+  // ... (other state variables)
 
-  /* Shared */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 25px;
-  --transition-speed: 0.2s;
-  --transition-ease: ease-in-out;
+  // --- Default Data & State (Add/Modify) ---
+  const DEFAULT_SHORTCUTS = [
+    { name: "GitHub", url: "https://github.com", icon: "fab fa-github" },
+    {
+      name: "Stack Overflow",
+      url: "https://stackoverflow.com",
+      icon: "fab fa-stack-overflow",
+    },
+    { name: "DevDocs", url: "https://devdocs.io", icon: "fas fa-book" },
+    { name: "ChatGPT", url: "https://chat.openai.com/", icon: "fas fa-robot" },
+    {
+      name: "MDN",
+      url: "https://developer.mozilla.org/",
+      icon: "fab fa-firefox-browser",
+    },
+    { name: "CodePen", url: "https://codepen.io/", icon: "fab fa-codepen" },
+  ];
+  const WEATHER_API_KEY = "6e0c2f7a6eaf708ac59413a675381188"; // <-- IMPORTANT: Replace with your actual API key!
 
-  /* Apply Theme Defaults */
-  --bg-color: var(--bg-color-light);
-  --widget-bg: var(--widget-bg-light);
-  --text-color: var(--text-color-light);
-  --text-muted: var(--text-muted-light);
-  --border-color: var(--border-color-light);
-  --accent-color: var(--accent-color-light);
-  --accent-color-rgb: var(--accent-color-rgb-light);
-  --input-bg: var(--input-bg-light);
-  --input-border: var(--input-border-light);
-  --weather-bg: var(--weather-bg-light);
-  --task-completed-bg: var(--task-completed-light);
-  --pomodoro-btn-bg: var(--pomodoro-btn-bg-light);
-  --widget-bg-rgb: var(--widget-bg-rgb-light);
-  --border-color-rgb: var(--border-color-rgb-light);
-  --shadow: var(--shadow-light);
-  --shadow-hover: var(--shadow-hover-light);
-  --shadow-focus: var(--shadow-focus-light);
-  --shadow-widget: var(--shadow-widget-light);
-  --shadow-widget-hover: var(--shadow-widget-hover-light);
-}
+  let suggestionFetchTimeout;
+  let currentSuggestionIndex = -1;
+  let userName = ""; // Added
 
-[data-theme="dark"] {
-  --bg-color: var(--bg-color-dark);
-  --widget-bg: var(--widget-bg-dark);
-  --text-color: var(--text-color-dark);
-  --text-muted: var(--text-muted-dark);
-  --border-color: var(--border-color-dark);
-  --accent-color: var(--accent-color-dark);
-  --accent-color-rgb: var(--accent-color-rgb-dark);
-  --input-bg: var(--input-bg-dark);
-  --input-border: var(--input-border-dark);
-  --weather-bg: var(--weather-bg-dark);
-  --task-completed-bg: var(--task-completed-dark);
-  --pomodoro-btn-bg: var(--pomodoro-btn-bg-dark);
-  --widget-bg-rgb: var(--widget-bg-rgb-dark);
-  --border-color-rgb: var(--border-color-rgb-dark);
-  --shadow: var(--shadow-dark);
-  --shadow-hover: var(--shadow-hover-dark);
-  --shadow-focus: var(--shadow-focus-dark);
-  --shadow-widget: var(--shadow-widget-dark);
-  --shadow-widget-hover: var(--shadow-widget-hover-dark);
-}
+  // Task List State
+  let tasks = []; // Added
 
-/* --- Base & Reset --- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-html {
-  scroll-behavior: smooth;
-}
-body {
-  font-family: var(--font-primary);
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  padding-top: 6rem; /* Adjusted */
-  line-height: 1.6;
-  min-height: 100vh;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed; /* Added */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  // Daily Goal State
+  let dailyGoal = { text: "", date: "" }; // Added
 
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 1.5rem 5rem; /* Adjusted bottom padding */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: calc(100vh - 6rem); /* Match body padding-top */
-}
+  // Pomodoro State
+  const POMODORO_TIMES = {
+    work: 25 * 60,
+    shortBreak: 1 * 60,
+    longBreak: 15 * 60,
+  }; // Seconds
+  let pomodoroInterval = null;
+  let pomodoroTimeLeft = POMODORO_TIMES.work;
+  let pomodoroCurrentMode = "work"; // 'work', 'shortBreak', 'longBreak'
+  let pomodoroIsRunning = false;
+  let pomodoroIsAlarmPlaying = false; // <-- Track if alarm is active
+  let pomodoroNextModeTimeoutId = null; // <-- Store timeout ID for mode switch
 
-/* Added for semantic wrapper */
-.main-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* --- Helper Classes --- */
-.icon-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 0.6rem;
-  border-radius: 50%;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-  line-height: 1;
-}
-.icon-btn:hover {
-  background-color: rgba(var(--accent-color-rgb), 0.1);
-  color: var(--accent-color);
-}
-
-/* --- Top Controls (Settings & Theme) --- */
-.top-controls {
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  z-index: 50;
-}
-.theme-switch-wrapper {
-  display: flex;
-  align-items: center;
-}
-.theme-switch {
-  position: relative;
-  display: inline-block;
-  width: 52px;
-  height: 26px;
-}
-.theme-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  [data-theme="dark"] & {
-    background-color: #4e5257;
-  }
-  transition: var(--transition-speed) var(--transition-ease);
-  border-radius: 26px;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: var(--transition-speed) var(--transition-ease);
-  border-radius: 50%;
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  content: "\f185"; /* Sun */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #f39c12; /* Sun color */
-}
-input:checked + .slider {
-  background-color: var(--accent-color);
-}
-input:checked + .slider:before {
-  transform: translateX(26px);
-  content: "\f186"; /* Moon */
-  color: #f1c40f; /* Moon color */
-}
-
-/* --- Header Section --- */
-.header-section {
-  position: fixed;
-  top: 1rem; /* Align with body padding */
-  left: 1.5rem;
-  z-index: 40;
-  width: auto;
-  max-width: none;
-  text-align: left;
-  margin-bottom: 0;
-  padding: 0.5rem; /* Added padding */
-  background-color: rgba(var(--widget-bg-rgb), 0.1); /* Subtle background */
-  backdrop-filter: blur(3px); /* Subtle blur */
-  -webkit-backdrop-filter: blur(3px);
-  border-radius: var(--border-radius-md);
-  border: 1px solid rgba(var(--border-color-rgb), 0.1); /* Subtle border */
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    border-color var(--transition-speed) var(--transition-ease);
-}
-.time-date {
-  margin-bottom: 0.1rem; /* Adjusted space */
-  text-align: left;
-}
-#clock {
-  font-size: 1.7rem; /* Adjusted */
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  line-height: 1.1; /* Adjusted */
-  margin-bottom: 0.1rem; /* Added */
-}
-#date {
-  font-size: 0.85rem; /* Adjusted */
-  font-weight: 400;
-  color: var(--text-muted);
-}
-.greeting-section {
-  margin-top: 0;
-  text-align: left;
-}
-#greeting {
-  font-size: 0.95rem; /* Adjusted */
-  font-weight: 400; /* Adjusted */
-  color: var(--text-color);
-}
-
-#daily-goal-input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--input-border);
-  border-radius: var(--border-radius-md);
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  font-family: var(--font-primary);
-  font-size: 1rem;
-  outline: none;
-  text-align: center;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: border-color var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-#daily-goal-input::placeholder {
-  color: var(--text-muted);
-  opacity: 0.8;
-  font-style: italic;
-}
-#daily-goal-input:focus {
-  border-color: var(--accent-color);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 0 0 3px var(--shadow-focus);
-}
-
-/* --- Search Bar & Suggestions --- */
-.search-container {
-  position: relative;
-  width: 100%;
-  max-width: 650px;
-  margin-bottom: 3.5rem;
-  margin-top: -12px;
-  z-index: 10; /* Increased spacing */
-}
-#search-form {
-  display: flex;
-  width: 100%;
-  border: 1px solid var(--input-border);
-  border-radius: var(--border-radius-xl);
-  overflow: hidden;
-  background-color: var(--input-bg);
-  box-shadow: var(--shadow-widget); /* Applied new shadow */
-  transition: border-color var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    transform var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease); /* Added transform & bg */
-}
-#search-form:focus-within {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px var(--shadow-focus), var(--shadow-widget-hover); /* Use hover shadow as base */
-  transform: scale(1.01); /* Subtle scale on focus */
-}
-#search-engine {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: transparent;
-  border: none;
-  border-right: 1px solid var(--border-color); /* Match border */
-  padding: 0.8rem 2.5rem 0.8rem 1.2rem;
-  margin: 0;
-  font-family: var(--font-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  line-height: inherit;
-  cursor: pointer;
-  outline: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236c757d'%3E%3Cpath fill-rule='evenodd' d='M4.646 6.146a.5.5 0 0 1 .708 0L8 8.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.8rem center;
-  background-size: 16px 16px;
-  border-radius: var(--border-radius-xl) 0 0 var(--border-radius-xl);
-  transition: border-color var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-[data-theme="dark"] #search-engine {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23adb5bd'%3E%3Cpath fill-rule='evenodd' d='M4.646 6.146a.5.5 0 0 1 .708 0L8 8.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-}
-#search-engine:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  [data-theme="dark"] & {
-    background-color: rgba(255, 255, 255, 0.03);
-  }
-}
-#search-engine option {
-  background-color: var(--widget-bg);
-  color: var(--text-color);
-  padding: 0.6em 1em;
-  font-weight: 400;
-}
-#search-input {
-  flex-grow: 1;
-  padding: 0.8rem 1.2rem;
-  border: none;
-  background-color: transparent;
-  color: var(--text-color);
-  font-size: 1rem;
-  font-family: var(--font-primary);
-  outline: none;
-  transition: color var(--transition-speed) var(--transition-ease);
-}
-#search-input::placeholder {
-  color: var(--text-muted);
-  opacity: 0.8;
-}
-#search-form button {
-  padding: 0.7rem 1.2rem;
-  border: none;
-  background-color: transparent;
-  color: var(--accent-color);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-#search-form button:hover {
-  background-color: rgba(var(--accent-color-rgb), 0.1);
-}
-.suggestions-list {
-  display: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 8px); /* Increased space */
-  background-color: var(--widget-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md); /* Matched */
-  box-shadow: var(--shadow-widget-hover); /* Use hover shadow */
-  z-index: 100;
-  max-height: 250px;
-  overflow-y: auto;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    border-color var(--transition-speed) var(--transition-ease);
-}
-.suggestion-item {
-  padding: 0.8rem 1.3rem; /* Increased padding */
-  cursor: pointer;
-  color: var(--text-color);
-  font-size: 0.9rem; /* Adjusted */
-  border-bottom: 1px solid var(--border-color); /* Added */
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-.suggestion-item:last-child {
-  border-bottom: none; /* Remove border on last item */
-}
-.suggestion-item:hover,
-.suggestion-item.active {
-  background-color: var(--accent-color);
-  color: white;
-  [data-theme="dark"] & {
-    color: #fff;
-  } /* Ensure white text on dark active */
-}
-
-/* --- Website Shortcuts --- */
-.shortcuts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 1.5rem; /* Increased gap */
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 3.5rem; /* Increased spacing */
-}
-.shortcut-item {
-  background-color: var(--widget-bg);
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 1.2rem 1rem;
-  border-radius: var(--border-radius-lg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-shadow: var(--shadow-widget); /* Applied new shadow */
-  border: 1px solid var(--border-color); /* Added subtle border */
-  min-height: 100px;
-  overflow: hidden;
-  transition: transform var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    border-color var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-.shortcut-item:hover {
-  transform: translateY(-5px) scale(1.03); /* Slightly more pronounced hover */
-  box-shadow: var(--shadow-widget-hover);
-  border-color: var(--accent-color); /* Highlight border on hover */
-}
-.shortcut-item i {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-  color: var(--accent-color);
-  transition: color var(--transition-speed) var(--transition-ease);
-}
-.shortcut-item span {
-  font-size: 0.9rem;
-  font-weight: 500;
-  word-break: break-word;
-  line-height: 1.3;
-}
-
-/* Style for the item being dragged */
-.shortcut-item.dragging {
-  opacity: 0.5;
-  border: 2px dashed var(--accent-color); /* Make it clear it's being dragged */
-  transform: scale(0.95); /* Optional: slightly shrink */
-}
-
-/* Style for potential drop targets when dragging over them */
-.shortcut-item.drag-over {
-  /* Add a visual indicator where it will be dropped */
-  /* Option 1: Border */
-  /* border-top: 3px solid var(--accent-color); */
-
-  /* Option 2: Background highlight (subtle) */
-  background-color: rgba(var(--accent-color-rgb), 0.08);
-
-  /* Option 3: Transform target slightly */
-  transform: scale(1.02);
-}
-
-/* --- Ensure existing shortcut styles allow for these changes --- */
-.shortcut-item {
-  /* ... existing styles ... */
-  /* Make transition smoother for drag-over effects */
-  transition: transform var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    border-color var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease),
-    opacity var(--transition-speed) var(--transition-ease); /* Add opacity */
-  cursor: grab; /* Indicate it's draggable */
-}
-.shortcut-item:active {
-  cursor: grabbing; /* Indicate dragging */
-}
-
-/* Adjust grid layout slightly to prevent jumpiness if needed */
-.shortcuts-grid {
-  position: relative; /* Helps contain absolute/fixed positioning if used later */
-}
-
-/* --- Widgets Area --- */
-.widgets-area {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.75rem; /* Increased gap */
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: -5rem; /* Increased spacing */
-}
-.widget {
-  background-color: var(--widget-bg);
-  padding: 1.5rem;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-widget); /* Applied new shadow */
-  border: 1px solid var(--border-color);
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    border-color var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Ensure content respects border-radius */
-}
-.widget:hover {
-  box-shadow: var(--shadow-widget-hover); /* Add subtle hover shadow */
-}
-.widget h3 {
-  margin-bottom: 1.2rem; /* Increased space */
-  font-size: 1.1rem; /* Consistent */
-  font-weight: 600;
-  color: var(--text-color);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.8rem; /* Increased padding */
-  transition: border-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-  flex-shrink: 0;
-}
-
-/* Task List Enhancements */
-#task-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem 0;
-  flex-grow: 1;
-  max-height: 250px;
-  overflow-y: auto;
-  padding-right: 5px; /* Space for scrollbar */
-  margin-right: -5px; /* Offset padding */
-}
-#task-list li {
-  display: flex;
-  align-items: center;
-  padding: 0.7rem 0.3rem; /* Adjusted padding */
-  border-bottom: 1px solid var(--border-color); /* Adjusted border */
-  position: relative;
-  word-break: break-word;
-  transition: all var(--transition-speed) var(--transition-ease); /* Animate all changes */
-}
-#task-list li:last-child {
-  border-bottom: none;
-}
-#task-list input[type="checkbox"] {
-  margin-right: 0.8rem;
-  cursor: pointer;
-  accent-color: var(--accent-color);
-  width: 18px; /* Slightly larger */
-  height: 18px;
-  margin-top: 2px; /* Align better */
-  flex-shrink: 0;
-}
-#task-list label {
-  flex-grow: 1;
-  cursor: pointer;
-  transition: color var(--transition-speed) var(--transition-ease),
-    text-decoration var(--transition-speed) var(--transition-ease);
-}
-#task-list li.completed {
-  background-color: transparent; /* Removed background */
-  opacity: 0.6; /* Use opacity mainly */
-}
-#task-list li.completed label {
-  text-decoration: line-through;
-  color: var(--text-muted);
-}
-.delete-task-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1rem; /* Slightly larger */
-  cursor: pointer;
-  padding: 0.3rem 0.5rem;
-  margin-left: 0.5rem;
-  border-radius: var(--border-radius-sm);
-  opacity: 0;
-  line-height: 1;
-  flex-shrink: 0;
-  transition: color var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    opacity var(--transition-speed) var(--transition-ease); /* Add opacity transition */
-}
-#task-list li:hover .delete-task-btn {
-  opacity: 1;
-}
-.delete-task-btn:hover {
-  color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-}
-.add-task-area {
-  display: flex;
-  margin-top: 1rem; /* Ensured margin */
-  border-top: 1px solid var(--border-color);
-  padding-top: 1rem; /* Adjusted padding */
-  flex-shrink: 0;
-}
-#new-task-input {
-  flex-grow: 1;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--input-border);
-  border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  font-family: var(--font-primary);
-  font-size: 0.9rem;
-  outline: none;
-  border-right: none;
-  transition: border-color var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-#new-task-input:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--shadow-focus);
-  position: relative;
-  z-index: 1;
-}
-#add-task-btn {
-  padding: 0.6rem 0.9rem;
-  background-color: var(--accent-color);
-  color: white;
-  border: 1px solid var(--accent-color);
-  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    filter var(--transition-speed) var(--transition-ease);
-  flex-shrink: 0;
-}
-#add-task-btn:hover {
-  filter: brightness(1.1);
-}
-
-/* Pomodoro Timer Widget */
-.pomodoro-widget {
-  text-align: center;
-}
-.pomodoro-timer-display {
-  margin-bottom: 1.5rem; /* Increased space */
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-#pomodoro-time {
-  display: block;
-  font-size: 3rem; /* Increased size */
-  font-weight: 600;
-  color: var(--accent-color);
-  line-height: 1.1;
-  transition: color var(--transition-speed) var(--transition-ease);
-}
-#pomodoro-status {
-  display: block;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  font-style: italic;
-  min-height: 1.2em;
-  transition: color var(--transition-speed) var(--transition-ease);
-}
-.pomodoro-controls,
-.pomodoro-modes {
-  display: flex;
-  justify-content: center;
-  gap: 0.8rem;
-  margin-top: 1.2rem; /* Adjusted spacing */
-  flex-shrink: 0;
-}
-.pomodoro-btn,
-.mode-btn {
-  background-color: var(--pomodoro-btn-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  padding: 0.7rem 1.1rem; /* Increased padding */
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-family: var(--font-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: 0 1px 2px var(--shadow); /* Added subtle shadow */
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    border-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    transform var(--transition-speed) var(--transition-ease);
-}
-.pomodoro-btn:hover,
-.mode-btn:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  transform: translateY(-2px); /* Add lift effect */
-  box-shadow: 0 3px 6px var(--shadow-hover);
-}
-.pomodoro-btn:active,
-.mode-btn:active {
-  transform: translateY(0px); /* Press down effect */
-  box-shadow: 0 1px 2px var(--shadow);
-}
-
-.pomodoro-alarm-controls {
-  display: none; /* Hidden by default, JS will show it */
-  margin-top: 10px;
-  text-align: center;
-}
-
-.pomodoro-alarm-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  /* Add other button styles as needed */
-}
-
-/* You might want a specific style when controls are visible */
-.pomodoro-alarm-controls.visible {
-  display: block; /* Or flex, grid, etc. */
-}
-.pomodoro-btn i {
-  font-size: 1.1em;
-}
-.pomodoro-btn#pomodoro-start-pause.running {
-  color: #dc3545;
-}
-.pomodoro-btn#pomodoro-start-pause.running:hover {
-  border-color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-}
-.mode-btn.active {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-  color: white;
-  box-shadow: 0 2px 5px rgba(var(--accent-color-rgb), 0.3); /* Slightly stronger shadow */
-}
-.mode-btn.active:hover {
-  color: white;
-  filter: brightness(1.1);
-  transform: translateY(-1px); /* Less lift for active button */
-}
-
-/* Weather Widget */
-.weather-widget {
-  background-color: var(--weather-bg); /* Uses theme variable */
-  backdrop-filter: blur(8px); /* Adjusted blur */
-  -webkit-backdrop-filter: blur(8px);
-}
-#weather-info {
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  min-height: 40px; /* Prevent collapse */
-  align-items: center; /* Vertically align items */
-}
-#weather-info img {
-  width: 40px;
-  height: 40px;
-  margin-right: 0;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
-}
-
-/* --- Styles for the Combined Weather & Quote Widget --- */
-.weather-quote-widget #weather-info {
-    /* Add some space below current weather */
-    margin-bottom: 1rem;
-}
-
-/* New styles for the quote area within the weather widget */
-.quote-area {
-    padding: 0.8rem 0; /* Vertical padding */
-    margin: 0.5rem 0 1rem 0; /* Top/Bottom margin */
-    border-top: 1px solid var(--border-color); /* Separator above quote */
-    border-bottom: 1px solid var(--border-color); /* Separator below quote */
-}
-
-#quote-text {
-    font-family: var(--font-quote);
-    font-size: 1rem; /* Slightly smaller to fit better */
-    line-height: 1.4;
-    margin-bottom: 0.6rem;
-    font-style: italic;
-    color: var(--text-color);
-    border-left: 3px solid var(--accent-color);
-    padding-left: 0.8rem; /* Adjust padding */
-    transition: color var(--transition-speed) var(--transition-ease);
-}
-
-.quote-footer {
-    display: flex; /* Use flex to position author and button */
-    justify-content: space-between; /* Push author left, button right */
-    align-items: center;
-    padding-right: 0.2rem; /* Align button better */
-     padding-left: calc(0.8rem + 3px); /* Match quote text indent */
-}
-
-#quote-author {
-    display: inline; /* Make it inline */
-    font-size: 0.85rem;
-    text-align: left; /* Align left */
-    color: var(--text-muted);
-    font-style: normal;
-    padding-right: 0; /* Remove previous right padding */
-    transition: color var(--transition-speed) var(--transition-ease);
-    flex-grow: 1; /* Allow author to take space */
-}
-
-#quote-author::before {
-    content: "— ";
-}
-
-/* Keep refresh button styles, ensure they work in new context */
-.quote-refresh-btn {
-    /* align-self: flex-end; */ /* Remove this */
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-    padding: 0.3rem 0.6rem; /* Adjust padding if needed */
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-size: 0.8rem; /* Adjust size */
-    line-height: 1;
-    transition: all var(--transition-speed) var(--transition-ease);
-    flex-shrink: 0; /* Prevent button from shrinking */
-    margin-left: 0.5rem; /* Add space between author and button */
-}
-
-.quote-refresh-btn:hover {
-    background-color: rgba(var(--accent-color-rgb), 0.1);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    transform: rotate(90deg);
-}
-
-/* Adjust forecast container margin */
-.weather-quote-widget .weather-forecast-container {
-    margin-top: 0; /* Remove top margin as quote area has margin-bottom */
-    padding-top: 0.5rem; /* Reduce padding slightly */
-    border-top: none; /* Remove top border as quote area has border-bottom */
-}
-
-/* --- Settings Modal --- */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  transition: background-color var(--transition-speed) var(--transition-ease);
-}
-.modal-content {
-  background-color: var(--widget-bg);
-  color: var(--text-color);
-  margin: 6% auto; /* Adjusted margin */
-  padding: 2.5rem; /* Increased padding */
-  border: none;
-  width: 90%;
-  max-width: 650px;
-  border-radius: var(--border-radius-lg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  position: relative;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-.close-btn {
-  color: var(--text-muted);
-  position: absolute;
-  top: 1rem;
-  right: 1.2rem;
-  font-size: 1.8rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: color var(--transition-speed) var(--transition-ease);
-  padding: 0.5rem;
-  line-height: 1;
-}
-.close-btn:hover,
-.close-btn:focus {
-  color: var(--text-color);
-}
-.setting-section {
-  margin-bottom: 2.5rem; /* Increased space */
-  padding-bottom: 2rem; /* Increased space */
-  border-bottom: 1px solid var(--border-color);
-  transition: border-color var(--transition-speed) var(--transition-ease);
-}
-.setting-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-.setting-section h2 {
-  /* Modal Title */
-  margin-bottom: 2rem;
-  font-weight: 700;
-  text-align: center;
-}
-.setting-section h3 {
-  margin-bottom: 1.5rem; /* Increased space */
-  font-size: 1.2rem; /* Adjusted size */
-  font-weight: 600;
-  transition: color var(--transition-speed) var(--transition-ease);
-}
-.setting-section label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-#modal-shortcuts-list .shortcut-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.8rem 0.2rem; /* Increased padding */
-  border-bottom: 1px dashed var(--border-color);
-  font-size: 0.95rem;
-  transition: border-color var(--transition-speed) var(--transition-ease);
-}
-#modal-shortcuts-list .shortcut-entry:last-child {
-  border-bottom: none;
-}
-#modal-shortcuts-list i {
-  margin-right: 0.5rem;
-  color: var(--accent-color);
-  opacity: 0.8;
-  transition: color var(--transition-speed) var(--transition-ease);
-}
-#modal-shortcuts-list button {
-  margin-left: 1rem;
-  padding: 0.3rem 0.7rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  background-color: #e05d5d;
-  [data-theme="dark"] & {
-    background-color: #c04a4a;
-  }
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-sm);
-  transition: background-color var(--transition-speed) var(--transition-ease);
-}
-#modal-shortcuts-list button:hover {
-  background-color: #c82333;
-  [data-theme="dark"] & {
-    background-color: #a03a3a;
-  }
-}
-
-/* Modal Forms Styling */
-.add-shortcut-form,
-#bg-value-input {
-  margin-top: 1.5rem; /* Increased */
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem; /* Increased */
-  align-items: center;
-}
-#bg-value-input {
-  margin-bottom: 1rem;
-}
-.add-shortcut-form input[type="text"],
-.add-shortcut-form input[type="url"],
-#bg-value-input input[type="url"],
-#bg-value-input input[type="color"], /* Keep specific input type styling */
-.setting-section select,
-.setting-section input[type="text"] {
-  width: 100%;
-  padding: 0.7rem 0.9rem;
-  border: 1px solid var(--input-border);
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  border-radius: var(--border-radius-md);
-  font-size: 0.95rem;
-  font-family: var(--font-primary);
-  outline: none;
-  transition: border-color var(--transition-speed) var(--transition-ease),
-    box-shadow var(--transition-speed) var(--transition-ease),
-    background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-}
-/* Specific styling for color input to make it visible */
-#bg-value-input input[type="color"] {
-  height: 40px; /* Give it some height */
-  padding: 0.2rem 0.4rem; /* Adjust padding */
-  cursor: pointer;
-}
-
-.add-shortcut-form input[type="text"]:focus,
-.add-shortcut-form input[type="url"]:focus,
-#bg-value-input input[type="url"]:focus,
-.setting-section select:focus,
-.setting-section input[type="text"]:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--shadow-focus);
-}
-.add-shortcut-form button,
-#apply-bg-btn {
-  padding: 0.9rem 1.1rem; /* Increased */
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  grid-column: 1 / -1;
-  margin-top: 1rem; /* Increased */
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    filter var(--transition-speed) var(--transition-ease);
-}
-.add-shortcut-form button:hover,
-#apply-bg-btn:hover {
-  filter: brightness(1.1);
-}
-#reset-settings-btn {
-  margin-top: 0.5rem; /* Adjusted margin */
-  padding: 0.8rem 1.3rem; /* Increased */
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: background-color var(--transition-speed) var(--transition-ease);
-}
-#reset-settings-btn:hover {
-  background-color: #c82333;
-}
-
-/* --- Responsive Design --- */
-@media (min-width: 992px) {
-  .widgets-area {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .widgets-area {
-    grid-template-columns: 1fr 1fr;
-  }
-  /* Adjust shortcuts grid earlier if needed */
-  .shortcuts-grid {
-    max-width: 1000px;
-    grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
-  }
-}
-@media (min-width: 768px) {
-  /* Keep shortcuts grid columns consistent for larger screens */
-  .shortcuts-grid {
-    max-width: 1000px;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-}
-
-@media (max-width: 767.98px) {
-  /* Tablet breakpoint */
-  .header-section {
-    left: 1rem;
-    top: 0.8rem;
-  } /* Adjust header position */
-  .top-controls {
-    right: 1rem;
-    top: 0.8rem;
-  } /* Adjust controls */
-  body {
-    padding-top: 5.5rem;
-  } /* Slightly less top padding */
-  .container {
-    padding: 0 1rem 4rem;
-  }
-  .main-content {
-    padding-top: 1rem;
-  }
-  .shortcuts-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 1.2rem;
-  }
-}
-
-@media (max-width: 600px) {
-  /* Mobile breakpoint */
-  body {
-    padding-top: 6rem;
-  } /* More space maybe needed */
-  .header-section {
-    padding: 0.4rem;
-    /* Optional: Stack header items if needed */
-    /* display: flex; flex-direction: column; align-items: flex-start; */
-  }
-  .top-controls {
-    top: 1rem;
-    right: 1rem;
-    gap: 0.5rem;
-  }
-  .search-container {
-    margin-bottom: 2.5rem;
-  }
-  #search-form {
-    border-radius: var(--border-radius-lg);
-  } /* Less rounded */
-  .shortcuts-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2.5rem;
-  }
-  .shortcut-item i {
-    font-size: 1.8rem;
-  }
-  .shortcut-item span {
-    font-size: 0.8rem;
-  }
-  .modal-content {
-    width: 95%;
-    margin: 10% auto;
-    padding: 1.5rem;
-  }
-  .widget h3 {
-    font-size: 1.05rem;
-  }
-  .widgets-area {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-  .pomodoro-modes {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Small mobile */
-  #clock {
-    font-size: 1.5rem;
-  }
-  #date {
-    font-size: 0.8rem;
-  }
-  #greeting {
-    font-size: 0.9rem;
-  }
-  .header-section {
-    /* Adjust if crowding occurs */
-    left: 0.5rem;
-    top: 0.5rem;
-    padding: 0.3rem;
-  }
-  .top-controls {
-    top: 0.5rem;
-    right: 0.5rem;
-  }
-  body {
-    padding-top: 5.5rem;
-  } /* May need adjustment */
-
-  #daily-goal-input {
-    font-size: 0.9rem;
-    padding: 0.7rem 0.8rem;
+  // --- Utility Functions ---
+  const getLocalStorage = (key, defaultValue) => {
+    try {
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : defaultValue;
+    } catch (e) {
+      console.error("Error reading localStorage key “" + key + "”:", e);
+      return defaultValue;
+    }
+  };
+  const setLocalStorage = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error("Error setting localStorage key “" + key + "”:", e);
+    }
+  };
+  function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
   }
 
-  /* Search bar wrapping */
-  #search-form {
-    flex-wrap: wrap;
-  }
-  #search-engine {
-    flex-basis: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-    text-align: center;
-    background-position: right 0.5rem center;
-    padding: 0.8rem 2rem 0.8rem 1rem;
-    font-size: 0.85rem;
-  }
-  #search-input {
-    flex-basis: calc(100% - 50px); /* Width minus button width */
-    border-radius: 0 0 0 var(--border-radius-lg); /* Bottom-left radius */
-    padding: 0.8rem 1rem; /* Adjust padding */
-    font-size: 0.9rem;
-  }
-  #search-form button {
-    flex-basis: 50px; /* Fixed width */
-    border-radius: 0 0 var(--border-radius-lg) 0; /* Bottom-right radius */
-    padding: 0.8rem; /* Adjust padding */
-  }
-  #search-form:focus-within {
-    transform: none;
-  } /* Disable scale on mobile */
+  // --- Core Functionality ---
 
-  .shortcuts-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.8rem;
-  }
-  .shortcut-item {
-    padding: 1rem 0.8rem;
-    min-height: 90px;
-  }
-  .shortcut-item i {
-    font-size: 1.6rem;
-    margin-bottom: 0.5rem;
-  }
-  .shortcut-item span {
-    font-size: 0.75rem;
-  }
-  .widget {
-    padding: 1.2rem;
-  }
-  .modal-content {
-    margin: 5% auto;
-    padding: 1.5rem;
-  }
-  .add-shortcut-form,
-  #bg-value-input {
-    grid-template-columns: 1fr;
-  } /* Stack modal inputs */
-  #pomodoro-time {
-    font-size: 2.5rem;
-  }
-  .pomodoro-controls,
-  .pomodoro-modes {
-    gap: 0.5rem;
-  }
-  .pomodoro-btn,
-  .mode-btn {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.85rem;
+  // 1. Live Clock, Date, and Greeting (Enhanced)
+  function updateTimeAndGreeting() {
+    const now = new Date();
+    const hours = now.getHours();
+
+    // Clock & Date
+    const timeString = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const dateString = now.toLocaleDateString([], {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    clockElement.textContent = timeString;
+    dateElement.textContent = dateString;
+
+    // Greeting
+    let greetingText = "Hello";
+    if (hours < 12) {
+      greetingText = "Good morning";
+    } else if (hours < 18) {
+      greetingText = "Good afternoon";
+    } else {
+      greetingText = "Good evening";
+    }
+    // Ensure greetingElement exists before setting textContent
+    if (greetingElement) {
+      greetingElement.textContent = `${greetingText}${
+        userName ? ", " + userName : ""
+      }!`;
+    }
   }
 
-  /* Task Add Area Stacking (Already stacks well, but check padding) */
-  .add-task-area {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding-top: 0.8rem;
-    margin-top: 0.8rem;
+  function loadUserName() {
+    userName = getLocalStorage("devHomeUserName", "");
+    // Ensure userNameInput exists
+    if (userNameInput) {
+      userNameInput.value = userName; // Pre-fill settings input
+    }
+    updateTimeAndGreeting(); // Update greeting immediately
   }
-  #new-task-input {
-    border-radius: var(--border-radius-md);
-    border-right: 1px solid var(--input-border); /* Add border back */
-    padding: 0.8rem; /* Match button */
+
+  setInterval(updateTimeAndGreeting, 1000);
+  loadUserName();
+  updateTimeAndGreeting();
+
+  // Ensure userNameInput exists before adding listener
+  if (userNameInput) {
+    userNameInput.addEventListener("input", () => {
+      // Use input for immediate feedback
+      userName = userNameInput.value.trim();
+      setLocalStorage("devHomeUserName", userName);
+      updateTimeAndGreeting();
+    });
   }
-  #add-task-btn {
-    border-radius: var(--border-radius-md);
-    width: 100%;
-    padding: 0.8rem; /* Match input */
+
+  // 2. Daily Goal (New)
+  function loadDailyGoal() {
+    const savedGoal = getLocalStorage("devHomeDailyGoal", {
+      text: "",
+      date: "",
+    });
+    const today = new Date().toLocaleDateString();
+
+    if (dailyGoalInput) {
+      // Check if element exists
+      if (savedGoal.date === today) {
+        dailyGoalInput.value = savedGoal.text;
+        dailyGoal = savedGoal;
+      } else {
+        dailyGoalInput.value = "";
+        dailyGoal = { text: "", date: today };
+        setLocalStorage("devHomeDailyGoal", dailyGoal);
+      }
+    }
   }
-}
+
+  if (dailyGoalInput) {
+    // Check if element exists
+    dailyGoalInput.addEventListener("change", () => {
+      dailyGoal.text = dailyGoalInput.value.trim();
+      dailyGoal.date = new Date().toLocaleDateString();
+      setLocalStorage("devHomeDailyGoal", dailyGoal);
+    });
+  }
+
+  loadDailyGoal();
+
+  // 4. Search Bar & Suggestions
+  function performSearch(queryOverride = null) {
+    const query =
+      queryOverride !== null ? queryOverride : searchInput.value.trim();
+    if (query && searchEngineSelect) {
+      const selectedOption =
+        searchEngineSelect.options[searchEngineSelect.selectedIndex];
+      const searchUrl = selectedOption.value + encodeURIComponent(query);
+      window.open(searchUrl, "_blank");
+      clearSuggestions();
+    }
+  }
+  function fetchSuggestions(query) {
+    if (!searchEngineSelect || !suggestionsContainer) return; // Add checks
+    const selectedOption =
+      searchEngineSelect.options[searchEngineSelect.selectedIndex];
+    const suggestUrlBase = selectedOption.getAttribute("data-suggest-url");
+
+    if (!suggestUrlBase || query.length < 1) {
+      clearSuggestions();
+      return;
+    }
+    const callbackName = "handleSuggestions" + Date.now();
+    let fullSuggestUrl = "";
+    if (suggestUrlBase.includes("google.com")) {
+      fullSuggestUrl = `${suggestUrlBase}${encodeURIComponent(
+        query
+      )}&callback=${callbackName}`;
+    } else if (suggestUrlBase.includes("duckduckgo.com")) {
+      fullSuggestUrl = `${suggestUrlBase}${encodeURIComponent(
+        query
+      )}&callback=${callbackName}`;
+    } else {
+      clearSuggestions();
+      return;
+    }
+
+    const oldScript = document.getElementById("jsonp-script");
+    if (oldScript) oldScript.remove();
+    window[callbackName] = (data) => {
+      let suggestions = [];
+      if (suggestUrlBase.includes("google.com")) {
+        suggestions = data[1] || [];
+      } else if (suggestUrlBase.includes("duckduckgo.com")) {
+        suggestions = (data || []).map((item) => item.phrase);
+      }
+      displaySuggestions(suggestions);
+      document.getElementById("jsonp-script")?.remove();
+      try {
+        delete window[callbackName];
+      } catch (e) {
+        window[callbackName] = undefined;
+      }
+    };
+    const script = document.createElement("script");
+    script.id = "jsonp-script";
+    script.src = fullSuggestUrl;
+    script.onerror = () => {
+      console.error("Error fetching suggestions.");
+      clearSuggestions();
+      document.getElementById("jsonp-script")?.remove();
+      try {
+        delete window[callbackName];
+      } catch (e) {
+        window[callbackName] = undefined;
+      }
+    };
+    document.head.appendChild(script);
+  }
+  function displaySuggestions(suggestions) {
+    if (!suggestionsContainer) return; // Add check
+    clearSuggestions();
+    if (!suggestions || suggestions.length === 0) return;
+    suggestions.slice(0, 7).forEach((suggestion, index) => {
+      const item = document.createElement("div");
+      item.classList.add("suggestion-item");
+      item.textContent = suggestion;
+      item.dataset.index = index;
+      item.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        searchInput.value = suggestion;
+        performSearch(suggestion);
+      });
+      suggestionsContainer.appendChild(item);
+    });
+    suggestionsContainer.style.display = "block";
+    currentSuggestionIndex = -1;
+  }
+  function clearSuggestions() {
+    if (suggestionsContainer) {
+      // Add check
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.style.display = "none";
+    }
+    currentSuggestionIndex = -1;
+  }
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 250);
+  if (searchForm)
+    searchForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      performSearch();
+    });
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim();
+      if (query) {
+        debouncedFetchSuggestions(query);
+      } else {
+        clearSuggestions();
+      }
+    });
+    searchInput.addEventListener("blur", () => {
+      setTimeout(clearSuggestions, 150);
+    });
+  }
+  if (searchEngineSelect)
+    searchEngineSelect.addEventListener("change", clearSuggestions);
+
+  // 5. Shortcuts
+  let shortcuts = getLocalStorage("devHomeShortcuts", DEFAULT_SHORTCUTS);
+  let draggedItem = null;
+
+  // MODIFIED: renderShortcuts to add draggable attributes and simplify modal rendering logic
+  function renderShortcuts() {
+    if (!shortcutsContainer || !modalShortcutsList) return;
+
+    // --- Render Main Shortcut Grid ---
+    shortcutsContainer.innerHTML = ""; // Clear main grid
+    shortcuts.forEach((shortcut, index) => {
+      // Use index here for original position reference if needed later
+      const shortcutLink = document.createElement("a");
+      shortcutLink.href = shortcut.url;
+      shortcutLink.className = "shortcut-item";
+      shortcutLink.target = "_blank";
+      shortcutLink.rel = "noopener noreferrer";
+      shortcutLink.setAttribute(
+        "title",
+        `Ctrl + ${index + 1}: Open ${shortcut.name}`
+      ); // Keep keyboard shortcut hint
+
+      // --- Drag & Drop Attributes ---
+      shortcutLink.setAttribute("draggable", "true");
+      shortcutLink.dataset.id = shortcut.url; // Use URL as a unique ID for finding data later
+
+      shortcutLink.innerHTML = `
+                    <i class="${shortcut.icon || "fas fa-link"}"></i>
+                    <span>${shortcut.name}</span>
+                `;
+      shortcutsContainer.appendChild(shortcutLink);
+
+      // Add drag event listeners directly here
+      addDragEvents(shortcutLink);
+    });
+
+    // --- Render Modal Shortcut List (Simplified) ---
+    renderModalShortcuts(); // Call separate function to render modal list
+  }
+
+  // NEW: Function specifically for rendering the modal list
+  function renderModalShortcuts() {
+    if (!modalShortcutsList) return;
+    modalShortcutsList.innerHTML = ""; // Clear modal list
+    shortcuts.forEach((shortcut, index) => {
+      // Use the current 'shortcuts' array order
+      const modalEntry = document.createElement("div");
+      modalEntry.className = "shortcut-entry";
+      // Ensure delete button uses the CURRENT index from the potentially reordered array
+      modalEntry.innerHTML = `
+            <span><i class="${shortcut.icon || "fas fa-link"}"></i> ${
+        shortcut.name
+      } (${shortcut.url.substring(0, 30)}...)</span>
+            <button data-index="${index}" class="delete-shortcut-btn" title="Delete Shortcut">Delete</button>
+        `;
+      modalShortcutsList.appendChild(modalEntry);
+    });
+
+    // Re-attach delete listeners for the modal
+    document
+      .querySelectorAll("#modal-shortcuts-list .delete-shortcut-btn")
+      .forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const indexToDelete = parseInt(
+            e.target.getAttribute("data-index"),
+            10
+          );
+          deleteShortcut(indexToDelete); // deleteShortcut already saves and re-renders
+        });
+      });
+  }
+
+  function addShortcut(name, url, icon) {
+    if (name && url) {
+      try {
+        new URL(url);
+      } catch (_) {
+        alert("Please enter a valid URL (e.g., https://example.com)");
+        return;
+      }
+      shortcuts.push({ name, url, icon: icon || "fas fa-link" });
+      setLocalStorage("devHomeShortcuts", shortcuts);
+      renderShortcuts();
+      if (newShortcutNameInput) newShortcutNameInput.value = "";
+      if (newShortcutUrlInput) newShortcutUrlInput.value = "";
+      if (newShortcutIconInput) newShortcutIconInput.value = "";
+    } else {
+      alert("Please provide both a name and a URL for the shortcut.");
+    }
+  }
+  // MODIFIED: deleteShortcut now only needs to re-render the modal list if called from modal
+  function deleteShortcut(index) {
+    if (index >= 0 && index < shortcuts.length) {
+      shortcuts.splice(index, 1);
+      setLocalStorage("devHomeShortcuts", shortcuts);
+      renderShortcuts(); // Re-render both grid and modal list fully
+    }
+  }
+  if (addShortcutBtn)
+    addShortcutBtn.addEventListener("click", () => {
+      if (newShortcutNameInput && newShortcutUrlInput && newShortcutIconInput) {
+        addShortcut(
+          newShortcutNameInput.value.trim(),
+          newShortcutUrlInput.value.trim(),
+          newShortcutIconInput.value.trim()
+        );
+      }
+    });
+  // NEW: Function to add drag event listeners to an element
+  function addDragEvents(item) {
+    item.addEventListener("dragstart", handleDragStart);
+    item.addEventListener("dragend", handleDragEnd);
+    item.addEventListener("dragover", handleDragOver);
+    item.addEventListener("dragenter", handleDragEnter);
+    item.addEventListener("dragleave", handleDragLeave);
+    item.addEventListener("drop", handleDrop);
+  }
+
+  // --- Drag and Drop Event Handlers ---
+
+  function handleDragStart(e) {
+    // 'this' refers to the element the listener was attached to (the shortcutLink)
+    draggedItem = this;
+    this.classList.add("dragging");
+    // Optional: You could set dataTransfer data if needed, but storing the element might be enough
+    // e.dataTransfer.setData('text/plain', this.dataset.id);
+    e.dataTransfer.effectAllowed = "move"; // Indicate the type of drag operation
+  }
+
+  function handleDragEnd(e) {
+    this.classList.remove("dragging");
+
+    // Clean up any remaining drag-over styles
+    document.querySelectorAll(".shortcut-item.drag-over").forEach((item) => {
+      item.classList.remove("drag-over");
+    });
+    draggedItem = null; // Clear the dragged item reference
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault(); // Necessary to allow dropping
+    e.dataTransfer.dropEffect = "move"; // Visual cue for the cursor
+    // Add drag-over class to the item being hovered over
+    // 'this' is the potential drop target
+    if (this !== draggedItem) {
+      // Don't highlight the item being dragged
+      this.classList.add("drag-over");
+    }
+  }
+
+  function handleDragEnter(e) {
+    e.preventDefault(); // May be needed for some browsers/styles
+    if (this !== draggedItem) {
+      this.classList.add("drag-over");
+    }
+  }
+
+  function handleDragLeave(e) {
+    // Only remove if the mouse truly leaves the element, not just moving over children
+    if (e.target === this || !this.contains(e.relatedTarget)) {
+      this.classList.remove("drag-over");
+    }
+  }
+
+  function handleDrop(e) {
+    e.preventDefault(); // Prevent default drop behavior (like opening link)
+    e.stopPropagation(); // Prevent drop event bubbling up if needed
+
+    const dropTarget = this; // 'this' is the element where the drop occurred
+
+    dropTarget.classList.remove("drag-over"); // Clean up target style
+
+    // Ensure we are dropping on a different item and have a valid dragged item
+    if (draggedItem && draggedItem !== dropTarget) {
+      // --- 1. Reorder DOM Elements ---
+      const parent = shortcutsContainer;
+      const draggedRect = draggedItem.getBoundingClientRect();
+      const targetRect = dropTarget.getBoundingClientRect();
+
+      // Insert draggedItem before dropTarget
+      // Check if dragging down or up to place correctly
+      if (draggedRect.top < targetRect.top) {
+        // Dragging Down: Insert after the target's current next sibling or at the end
+        parent.insertBefore(draggedItem, dropTarget.nextSibling);
+      } else {
+        // Dragging Up: Insert before the target
+        parent.insertBefore(draggedItem, dropTarget);
+      }
+
+      // --- 2. Update the 'shortcuts' Array Order ---
+      const updatedShortcuts = [];
+      const currentItems = parent.querySelectorAll(".shortcut-item");
+
+      currentItems.forEach((itemElement) => {
+        // Find the original shortcut data using the unique ID (URL)
+        const shortcutData = shortcuts.find(
+          (s) => s.url === itemElement.dataset.id
+        );
+        if (shortcutData) {
+          updatedShortcuts.push(shortcutData);
+        } else {
+          console.warn(
+            "Could not find shortcut data for element:",
+            itemElement
+          );
+        }
+      });
+
+      // Replace the old array with the newly ordered one
+      shortcuts = updatedShortcuts;
+
+      // --- 3. Save to LocalStorage ---
+      setLocalStorage("devHomeShortcuts", shortcuts);
+
+      // --- 4. Re-render the Modal List to reflect new order and update indices ---
+      renderModalShortcuts(); // Only need to update the modal list's indices/order
+
+      // --- 5. Optional: Re-assign keyboard shortcut titles (or do it in renderShortcuts) ---
+      parent.querySelectorAll(".shortcut-item").forEach((item, index) => {
+        item.setAttribute(
+          "title",
+          `Ctrl + ${index + 1}: Open ${item.querySelector("span").textContent}`
+        );
+      });
+    }
+    draggedItem = null; // Clear reference
+  }
+
+  // --- Initialization ---
+  // ... (load other things) ...
+  renderShortcuts(); // Initial render
+  // ... (rest of your init code) ..
+
+  // 6. Task List
+  function loadTasks() {
+    tasks = getLocalStorage("devHomeTasks", []);
+    renderTasks();
+  }
+  function renderTasks() {
+    if (!taskListUl) return; // Add check
+    taskListUl.innerHTML = "";
+    if (!Array.isArray(tasks)) tasks = [];
+    tasks.forEach((task, index) => {
+      const li = document.createElement("li");
+      li.className = task.completed ? "completed" : "";
+      li.dataset.index = index;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = task.completed;
+      checkbox.id = `task-${index}`;
+      checkbox.addEventListener("change", toggleTaskComplete);
+      const label = document.createElement("label");
+      label.htmlFor = `task-${index}`;
+      label.textContent = task.text;
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-task-btn";
+      deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+      deleteBtn.title = "Delete Task";
+      deleteBtn.addEventListener("click", deleteTask);
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      li.appendChild(deleteBtn);
+      taskListUl.appendChild(li);
+    });
+  }
+  function addTask() {
+    if (!newTaskInput) return; // Add check
+    const taskText = newTaskInput.value.trim();
+    if (taskText) {
+      tasks.push({ text: taskText, completed: false });
+      newTaskInput.value = "";
+      saveAndRenderTasks();
+    }
+  }
+  function deleteTask(event) {
+    const li = event.target.closest("li");
+    if (!li) return;
+    const index = parseInt(li.dataset.index, 10);
+    if (!isNaN(index) && index >= 0 && index < tasks.length) {
+      tasks.splice(index, 1);
+      saveAndRenderTasks();
+    }
+  }
+  function toggleTaskComplete(event) {
+    const checkbox = event.target;
+    const li = checkbox.closest("li");
+    if (!li) return;
+    const index = parseInt(li.dataset.index, 10);
+    if (!isNaN(index) && index >= 0 && index < tasks.length) {
+      tasks[index].completed = checkbox.checked;
+      saveAndRenderTasks();
+    }
+  }
+  function saveAndRenderTasks() {
+    setLocalStorage("devHomeTasks", tasks);
+    renderTasks();
+  }
+  if (addTaskBtn) addTaskBtn.addEventListener("click", addTask);
+  if (newTaskInput)
+    newTaskInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        addTask();
+      }
+    });
+  loadTasks();
+
+  // 7. Pomodoro Timer
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+  function updatePomodoroDisplay() {
+    if (pomodoroTimeElement)
+      pomodoroTimeElement.textContent = formatTime(pomodoroTimeLeft);
+  }
+  function updatePomodoroStatus(statusText = "") {
+    if (!pomodoroStatusElement) return; // Add check
+    if (statusText) {
+      pomodoroStatusElement.textContent = statusText;
+    } else {
+      const modeText = pomodoroCurrentMode
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (c) => c.toUpperCase());
+      pomodoroStatusElement.textContent = pomodoroIsRunning
+        ? `${modeText} in progress...`
+        : `Ready for ${modeText}`;
+    }
+  }
+  function switchPomodoroMode(newMode) {
+    stopAlarmCompletely(); // Stop any lingering alarm sound/controls when switching mode
+    if (pomodoroIsRunning) stopPomodoroTimer();
+    pomodoroCurrentMode = newMode;
+    pomodoroTimeLeft = POMODORO_TIMES[newMode];
+    pomodoroModeBtns.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.mode === newMode);
+    });
+    updatePomodoroDisplay();
+    updatePomodoroStatus();
+    document.body.classList.remove("work-mode", "break-mode");
+    if (newMode === "work") document.body.classList.add("work-mode");
+    else document.body.classList.add("break-mode");
+  }
+
+  function startPausePomodoro() {
+    stopAlarmCompletely(); // Ensure alarm is off if user manually starts/pauses timer
+    if (pomodoroIsRunning) {
+      pausePomodoroTimer();
+    } else {
+      startPomodoroTimer();
+    }
+  }
+
+  // Function to update the pause/resume button state
+  function updatePauseResumeButton(isPaused) {
+    if (pomodoroPauseAlarmBtn) {
+      if (isPaused) {
+        pomodoroPauseAlarmBtn.innerHTML =
+          '<i class="fas fa-volume-up"></i> Resume Alarm';
+        pomodoroPauseAlarmBtn.title = "Resume Alarm Sound";
+      } else {
+        pomodoroPauseAlarmBtn.innerHTML =
+          '<i class="fas fa-volume-mute"></i> Pause Alarm';
+        pomodoroPauseAlarmBtn.title = "Pause Alarm Sound";
+      }
+    }
+  }
+
+  function startPomodoroTimer() {
+    if (pomodoroIsRunning || !pomodoroStartPauseBtn) return;
+    stopAlarmCompletely(); // Ensure previous alarm state is cleared
+    pomodoroIsRunning = true;
+    pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    pomodoroStartPauseBtn.classList.add("running");
+    updatePomodoroStatus();
+
+    pomodoroInterval = setInterval(() => {
+      pomodoroTimeLeft--;
+      updatePomodoroDisplay();
+
+      if (pomodoroTimeLeft <= 0) {
+        // Timer finished
+        stopPomodoroTimer(); // Stop the interval
+
+        // --- Alarm Sound Logic ---
+        if (pomodoroAlarmSound) {
+          pomodoroIsAlarmPlaying = true; // Set flag
+          if (pomodoroAlarmControls)
+            pomodoroAlarmControls.classList.add("visible"); // Show controls
+          updatePauseResumeButton(false);
+
+          pomodoroAlarmSound.currentTime = 0; // Rewind
+          pomodoroAlarmSound.play().catch((e) => {
+            console.warn(
+              "Audio play failed. User interaction might be required first.",
+              e
+            );
+            alert(
+              `${pomodoroCurrentMode.replace(/([A-Z])/g, " $1")} finished!`
+            );
+            stopAlarmCompletely(); // Clean up if sound fails
+          });
+        } else {
+          alert(`${pomodoroCurrentMode.replace(/([A-Z])/g, " $1")} finished!`);
+          stopAlarmCompletely(); // Clean up if sound element doesn't exist
+        }
+        // --- End Alarm Sound Logic ---
+
+        // Determine next mode
+        let nextMode = "work";
+        if (pomodoroCurrentMode === "work") nextMode = "shortBreak";
+        else if (pomodoroCurrentMode === "shortBreak") nextMode = "work";
+        else if (pomodoroCurrentMode === "longBreak") nextMode = "work";
+
+        const finishedModeText = pomodoroCurrentMode
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (c) => c.toUpperCase());
+        updatePomodoroStatus(`${finishedModeText} finished! Alarm playing...`);
+
+        // Schedule the mode switch, store the ID
+        clearTimeout(pomodoroNextModeTimeoutId); // Clear any previous pending switch
+        pomodoroNextModeTimeoutId = setTimeout(
+          () => {
+            if (pomodoroIsAlarmPlaying) {
+              // Only auto-switch if alarm wasn't manually stopped
+              stopAlarmCompletely(); // Ensure alarm stops if it was still playing somehow
+            }
+            switchPomodoroMode(nextMode);
+            // Optional: Auto-start next timer
+            // startPomodoroTimer();
+          },
+          pomodoroAlarmSound ? pomodoroAlarmSound.duration * 1000 + 500 : 500
+        ); // Wait for sound duration + buffer, or short delay
+      }
+    }, 1000);
+  }
+
+  function pausePomodoroTimer() {
+    if (!pomodoroIsRunning || !pomodoroStartPauseBtn) return;
+    clearInterval(pomodoroInterval);
+    pomodoroInterval = null;
+    pomodoroIsRunning = false;
+    pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    pomodoroStartPauseBtn.classList.remove("running");
+    updatePomodoroStatus("Paused");
+  }
+
+  function resetPomodoroTimer() {
+    stopAlarmCompletely(); // Stop alarm sound/controls on reset
+    stopPomodoroTimer();
+    pomodoroTimeLeft = POMODORO_TIMES[pomodoroCurrentMode];
+    updatePomodoroDisplay();
+    updatePomodoroStatus();
+  }
+
+  function stopPomodoroTimer() {
+    clearInterval(pomodoroInterval);
+    pomodoroInterval = null;
+    pomodoroIsRunning = false;
+    if (pomodoroStartPauseBtn) {
+      pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      pomodoroStartPauseBtn.classList.remove("running");
+    }
+    // Don't stop alarm here necessarily, let specific actions decide
+  }
+
+  // --- NEW: Function to completely stop the alarm and cleanup ---
+  function stopAlarmCompletely() {
+    clearTimeout(pomodoroNextModeTimeoutId); // Cancel pending mode switch
+    pomodoroNextModeTimeoutId = null;
+
+    if (pomodoroAlarmSound && pomodoroIsAlarmPlaying) {
+      pomodoroAlarmSound.pause();
+      pomodoroAlarmSound.currentTime = 0;
+    }
+    pomodoroIsAlarmPlaying = false;
+    if (pomodoroAlarmControls) {
+      pomodoroAlarmControls.classList.remove("visible"); // Hide controls
+    }
+    updatePauseResumeButton(false);
+  }
+
+  // --- Event Listeners for Pomodoro ---
+  if (pomodoroStartPauseBtn)
+    pomodoroStartPauseBtn.addEventListener("click", startPausePomodoro);
+  if (pomodoroResetBtn)
+    pomodoroResetBtn.addEventListener("click", resetPomodoroTimer);
+  pomodoroModeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => switchPomodoroMode(btn.dataset.mode));
+  });
+
+  // --- MODIFIED: Event Listener for Pause/Resume Alarm Button ---
+  if (pomodoroPauseAlarmBtn) {
+    pomodoroPauseAlarmBtn.addEventListener("click", () => {
+      // Only act if the alarm *should* be playing and the element exists
+      if (pomodoroIsAlarmPlaying && pomodoroAlarmSound) {
+        if (pomodoroAlarmSound.paused) {
+          // It's paused, so RESUME
+          pomodoroAlarmSound.play().catch((e) => {
+            // Added catch for safety
+            console.warn("Audio resume failed.", e);
+            // Optionally handle resume failure, maybe stop the alarm?
+            stopAlarmCompletely();
+          });
+          updatePauseResumeButton(false); // Set button back to "Pause"
+          updatePomodoroStatus("Alarm playing..."); // Update status
+        } else {
+          // It's playing, so PAUSE
+          pomodoroAlarmSound.pause();
+          updatePauseResumeButton(true); // Set button to "Resume"
+          updatePomodoroStatus("Alarm Sound Paused"); // Update status
+        }
+      }
+    });
+  }
+
+  // --- Event Listener for Stop Alarm Button ---
+  if (pomodoroStopAlarmBtn) {
+    pomodoroStopAlarmBtn.addEventListener("click", () => {
+      stopAlarmCompletely(); // Use the central cleanup function
+      const finishedModeText = pomodoroCurrentMode
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (c) => c.toUpperCase());
+      let nextMode = "work";
+      if (pomodoroCurrentMode === "work") nextMode = "shortBreak";
+      const nextModeText = nextMode
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (c) => c.toUpperCase());
+      updatePomodoroStatus(
+        `${finishedModeText} Finished. Alarm stopped. Press Play for ${nextModeText}.`
+      );
+    });
+  }
+
+  // --- Event Listener for when the sound finishes playing naturally ---
+  if (pomodoroAlarmSound) {
+    pomodoroAlarmSound.addEventListener("ended", () => {
+      // Only run cleanup if the alarm was supposed to be playing
+      // This check prevents issues if 'ended' fires unexpectedly
+      if (pomodoroIsAlarmPlaying) {
+        pomodoroIsAlarmPlaying = false; // Sound finished
+        if (pomodoroAlarmControls) {
+          pomodoroAlarmControls.classList.remove("visible"); // Hide controls
+        }
+        updatePauseResumeButton(false); // <<< Reset button state
+        // The automatic mode switch will still happen via the timeout set earlier
+        updatePomodoroStatus(
+          `${pomodoroCurrentMode
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (c) =>
+              c.toUpperCase()
+            )} Finished. Preparing next mode...`
+        );
+      }
+    });
+  }
+
+  // Initial setup
+  switchPomodoroMode("work");
+
+  // 8. Weather Widget
+  function fetchWeather(options = {}) {
+    const { coords, locationName } = options;
+    let apiUrl = "";
+    const units = "metric";
+    if (!WEATHER_API_KEY || WEATHER_API_KEY === "YOUR_OPENWEATHERMAP_API_KEY") {
+      if (weatherInfoElement)
+        weatherInfoElement.innerHTML =
+          '<i class="fas fa-exclamation-triangle"></i> Weather API key missing/invalid.';
+      console.warn("API Key missing.");
+      return;
+    }
+    if (weatherInfoElement)
+      weatherInfoElement.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Loading weather...';
+    if (coords) {
+      apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=${WEATHER_API_KEY}&units=${units}`;
+    } else if (locationName) {
+      apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+        locationName
+      )}&appid=${WEATHER_API_KEY}&units=${units}`;
+    } else {
+      if (weatherInfoElement)
+        weatherInfoElement.innerHTML =
+          '<i class="fas fa-map-marker-slash"></i> Location unavailable.';
+      return;
+    }
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errData) => {
+            throw new Error(
+              `HTTP error! Status: ${response.status}. Message: ${
+                errData.message || "Unknown"
+              }`
+            );
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (weatherInfoElement && data.cod === 200) {
+          const weatherDesc = data.weather[0].description;
+          const temp = Math.round(data.main.temp);
+          const iconCode = data.weather[0].icon;
+          const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+          const city = data.name;
+          const tempUnit = units === "metric" ? "°C" : "°F";
+          weatherInfoElement.innerHTML = `<img src="${iconUrl}" alt="${weatherDesc}" style="vertical-align: middle; width: 40px; height: 40px; margin-right: 5px;"> ${temp}${tempUnit}, ${weatherDesc} in ${city}`;
+          setLocalStorage("devHomeWeatherLastCity", city);
+        } else if (weatherInfoElement) {
+          weatherInfoElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${
+            data.message || "Data error."
+          }`;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching weather:", error);
+        if (weatherInfoElement)
+          weatherInfoElement.innerHTML = `<i class="fas fa-cloud-slash"></i> Could not fetch weather. ${
+            error.message.includes("not found") ? "(City?)" : ""
+          }`;
+      });
+  }
+  function initWeather() {
+    if (navigator.geolocation) {
+      if (weatherInfoElement)
+        weatherInfoElement.innerHTML =
+          '<i class="fas fa-map-marker-alt"></i> Getting location...';
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchWeather({ coords: position.coords });
+        },
+        (error) => {
+          console.warn(`Geolocation error (${error.code}): ${error.message}`);
+          let fallbackMessage = "Could not get location. ";
+          if (error.code === error.PERMISSION_DENIED) {
+            fallbackMessage = "Location access denied. ";
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            fallbackMessage = "Location info unavailable. ";
+          } else if (error.code === error.TIMEOUT) {
+            fallbackMessage = "Location request timed out. ";
+          }
+          const lastCity = getLocalStorage("devHomeWeatherLastCity", "London");
+          if (weatherInfoElement)
+            weatherInfoElement.innerHTML = `<i class="fas fa-info-circle"></i> ${fallbackMessage} Showing weather for ${lastCity}.`;
+          fetchWeather({ locationName: lastCity });
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    } else {
+      const lastCity = getLocalStorage("devHomeWeatherLastCity", "London");
+      if (weatherInfoElement)
+        weatherInfoElement.innerHTML = `<i class="fas fa-map-marker-slash"></i> Geolocation not supported. Showing for ${lastCity}.`;
+      fetchWeather({ locationName: lastCity });
+    }
+  }
+  initWeather();
+
+  // 9. Quotes
+
+  // NEW: Predefined array of quotes
+  const QUOTES = [
+    {
+      text: "The function of good software is to make the complex appear to be simple.",
+      author: "Grady Booch",
+    },
+    {
+      text: "Programs must be written for people to read, and only incidentally for machines to execute.",
+      author: "Harold Abelson",
+    },
+    {
+      text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      author: "Martin Fowler",
+    },
+    {
+      text: "First, solve the problem. Then, write the code.",
+      author: "John Johnson",
+    },
+    {
+      text: "Experience is the name everyone gives to their mistakes.",
+      author: "Oscar Wilde",
+    },
+    {
+      text: "Code is like humor. When you have to explain it, it’s bad.",
+      author: "Cory House",
+    },
+    { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+    {
+      text: "Java is to JavaScript what Car is to Carpet.",
+      author: "Chris Heilmann",
+    },
+    {
+      text: "Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday’s code.",
+      author: "Dan Salomon",
+    },
+    {
+      text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
+      author: "Antoine de Saint-Exupery",
+    },
+    {
+      text: "The best way to predict the future is to invent it.",
+      author: "Alan Kay",
+    },
+    {
+      text: "Walking on water and developing software from a specification are easy if both are frozen.",
+      author: "Edward V Berard",
+    },
+    {
+      text: "It’s not a bug – it’s an undocumented feature.",
+      author: "Anonymous",
+    },
+    {
+      text: "There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies.",
+      author: "C.A.R. Hoare",
+    },
+    { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+  ];
+
+  let lastQuoteIndex = -1; // Keep track of the last shown quote index
+
+  // NEW: Quote Widget Functionality
+  function displayNewQuote() {
+    if (!quoteTextElement || !quoteAuthorElement || QUOTES.length === 0) {
+      console.warn("Quote elements not found or no quotes available.");
+      if (quoteTextElement)
+        quoteTextElement.textContent = "Could not load quote.";
+      if (quoteAuthorElement) quoteAuthorElement.textContent = "";
+      return;
+    }
+
+    let randomIndex;
+    // Prevent showing the same quote twice in a row if there are multiple quotes
+    do {
+      randomIndex = Math.floor(Math.random() * QUOTES.length);
+    } while (QUOTES.length > 1 && randomIndex === lastQuoteIndex);
+
+    lastQuoteIndex = randomIndex; // Update the last shown index
+    const randomQuote = QUOTES[randomIndex];
+
+    quoteTextElement.textContent = randomQuote.text;
+    quoteAuthorElement.textContent = randomQuote.author || "Unknown"; // Handle missing author
+  }
+
+  // --- Event Listeners (Add/Modify) ---
+  // ... (existing listeners)
+
+  // NEW: Add listener for the new quote button
+  if (newQuoteBtn) {
+    newQuoteBtn.addEventListener("click", displayNewQuote);
+  }
+
+  // --- Initialization ---
+  // ... (load other things) ...
+  renderShortcuts();
+  loadTasks();
+  // load Pomodoro initial state
+  switchPomodoroMode("work"); // Or however you initialize it
+  initWeather();
+  loadUserName();
+  loadDailyGoal();
+  applyTheme(getLocalStorage("devHomeTheme", "light")); // Or your theme init logic
+  // ... (apply background, etc.)
+
+  displayNewQuote(); // <<< Call this function on page load to show initial quote
+
+  // 10. Dark Mode Toggle & Persistence
+  function applyTheme(theme) {
+    if (theme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      if (themeCheckbox) themeCheckbox.checked = true;
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      if (themeCheckbox) themeCheckbox.checked = false;
+    }
+    setLocalStorage("devHomeTheme", theme);
+  }
+  if (themeCheckbox) {
+    themeCheckbox.addEventListener("change", () => {
+      const newTheme = themeCheckbox.checked ? "dark" : "light";
+      applyTheme(newTheme);
+    });
+  }
+  const savedTheme = getLocalStorage("devHomeTheme", null);
+  if (savedTheme) {
+    applyTheme(savedTheme);
+  } else {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(prefersDark ? "dark" : "light");
+  }
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", (e) => {
+      if (!getLocalStorage("devHomeTheme", null)) {
+        applyTheme(e.matches ? "dark" : "light");
+      }
+    });
+
+  // 11. Settings Modal Logic
+  if (settingsBtn)
+    settingsBtn.addEventListener("click", () => {
+      if (settingsModal) settingsModal.style.display = "block";
+      renderShortcuts();
+      const currentBg = getLocalStorage("devHomeBackground", null);
+      if (currentBg && bgTypeSelect) {
+        bgTypeSelect.value = currentBg.type;
+        renderBackgroundInputs(currentBg.type);
+      } else {
+        renderBackgroundInputs("color");
+      }
+    });
+  if (closeModalBtn)
+    closeModalBtn.addEventListener("click", () => {
+      if (settingsModal) settingsModal.style.display = "none";
+    });
+  window.addEventListener("click", (event) => {
+    if (event.target == settingsModal) {
+      settingsModal.style.display = "none";
+    }
+  });
+
+  // 12. Background Customization
+  function renderBackgroundInputs(type) {
+    if (!bgValueContainer) return; // Add check
+    bgValueContainer.innerHTML = "";
+    let inputHtml = "";
+    const defaultBgColor =
+      getLocalStorage("devHomeTheme", "light") === "dark"
+        ? "#1a1a1a"
+        : "#f4f7f6";
+    const currentBg = getLocalStorage("devHomeBackground", {
+      type: "color",
+      value: defaultBgColor,
+    });
+    switch (type) {
+      case "color":
+        inputHtml = `<input type="color" id="bg-color-input" value="${
+          currentBg.type === "color" ? currentBg.value : defaultBgColor
+        }">`;
+        break;
+      case "gradient":
+        const gradValue =
+          currentBg.type === "gradient"
+            ? currentBg.value
+            : ["#4dabf7", "#282c34"];
+        inputHtml = `<label>Color 1: <input type="color" id="bg-gradient-color1" value="${
+          gradValue[0] || "#4dabf7"
+        }"></label><label>Color 2: <input type="color" id="bg-gradient-color2" value="${
+          gradValue[1] || "#282c34"
+        }"></label>`;
+        break;
+      case "image":
+        const imgValue = currentBg.type === "image" ? currentBg.value : "";
+        inputHtml = `<input type="url" id="bg-image-url" placeholder="Enter Image URL" value="${imgValue}">`;
+        break;
+    }
+    bgValueContainer.innerHTML = inputHtml;
+  }
+  function applyBackground(settings) {
+    document.body.style.backgroundImage = "";
+    document.body.style.backgroundColor = "var(--bg-color)";
+    switch (settings.type) {
+      case "color":
+        document.body.style.backgroundColor = settings.value;
+        document.body.style.backgroundImage = "none";
+        break;
+      case "gradient":
+        document.body.style.backgroundImage = `linear-gradient(to bottom right, ${settings.value[0]}, ${settings.value[1]})`;
+        document.body.style.backgroundColor = "";
+        break;
+      case "image":
+        document.body.style.backgroundImage = `url('${settings.value}')`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundColor = "";
+        break;
+    }
+    setLocalStorage("devHomeBackground", settings);
+  }
+  if (bgTypeSelect)
+    bgTypeSelect.addEventListener("change", (e) => {
+      renderBackgroundInputs(e.target.value);
+    });
+  if (applyBgBtn)
+    applyBgBtn.addEventListener("click", () => {
+      if (!bgTypeSelect) return; // Add check
+      const type = bgTypeSelect.value;
+      let value;
+      let isValid = true;
+      switch (type) {
+        case "color":
+          value = document.getElementById("bg-color-input")?.value;
+          break;
+        case "gradient":
+          value = [
+            document.getElementById("bg-gradient-color1")?.value,
+            document.getElementById("bg-gradient-color2")?.value,
+          ];
+          break;
+        case "image":
+          value = document.getElementById("bg-image-url")?.value.trim();
+          if (!value) {
+            alert("Please enter an Image URL.");
+            isValid = false;
+          } else {
+            try {
+              new URL(value);
+            } catch (_) {
+              alert("Please enter a valid Image URL.");
+              isValid = false;
+            }
+          }
+          break;
+      }
+      if (
+        isValid &&
+        value !== undefined &&
+        value !== null &&
+        !(Array.isArray(value) && value.some((v) => v === undefined))
+      ) {
+        applyBackground({ type, value });
+      } else if (isValid) {
+        alert("Please provide a value for the background.");
+      }
+    });
+  const savedBackground = getLocalStorage("devHomeBackground", null);
+  if (savedBackground) {
+    applyBackground(savedBackground);
+  } else {
+    document.body.style.backgroundColor = "var(--bg-color)";
+  }
+
+  // 13. Combined Keyboard Shortcuts Listener
+  document.addEventListener("keydown", (e) => {
+    const activeEl = document.activeElement;
+    const isInputFocused =
+      activeEl &&
+      (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA");
+    if (e.key === "/" && !isInputFocused) {
+      e.preventDefault();
+      if (searchInput) searchInput.focus();
+      return;
+    }
+    if (e.ctrlKey && e.key >= "1" && e.key <= "9" && !isInputFocused) {
+      e.preventDefault();
+      const index = parseInt(e.key) - 1;
+      if (index < shortcuts.length) {
+        window.open(shortcuts[index].url, "_blank");
+      }
+      return;
+    }
+    if (
+      activeEl === searchInput &&
+      suggestionsContainer &&
+      suggestionsContainer.style.display === "block"
+    ) {
+      const items = suggestionsContainer.querySelectorAll(".suggestion-item");
+      if (items.length === 0) return;
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          currentSuggestionIndex = Math.min(
+            currentSuggestionIndex + 1,
+            items.length - 1
+          );
+          updateSuggestionHighlight(items);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          currentSuggestionIndex = Math.max(currentSuggestionIndex - 1, -1);
+          updateSuggestionHighlight(items);
+          break;
+        case "Enter":
+          if (currentSuggestionIndex > -1) {
+            e.preventDefault();
+            items[currentSuggestionIndex].dispatchEvent(
+              new MouseEvent("mousedown")
+            );
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          clearSuggestions();
+          break;
+      }
+    }
+  });
+  function updateSuggestionHighlight(items) {
+    if (!items) return; // Add check
+    items.forEach((item, index) => {
+      item.classList.toggle("active", index === currentSuggestionIndex);
+      if (index === currentSuggestionIndex)
+        item.scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  // 14. Reset Settings
+  if (resetSettingsBtn)
+    resetSettingsBtn.addEventListener("click", () => {
+      if (
+        confirm(
+          "Are you sure you want to reset ALL settings (theme, name, shortcuts, tasks, goal, background, weather location)? This cannot be undone."
+        )
+      ) {
+        localStorage.removeItem("devHomeTheme");
+        localStorage.removeItem("devHomeUserName");
+        localStorage.removeItem("devHomeShortcuts");
+        localStorage.removeItem("devHomeTasks");
+        localStorage.removeItem("devHomeDailyGoal");
+        localStorage.removeItem("devHomeWeatherLastCity");
+        localStorage.removeItem("devHomeBackground");
+        window.location.reload();
+      }
+    });
+}); // End DOMContentLoaded
+// --- END OF EMBEDDED JAVASCRIPT ---
