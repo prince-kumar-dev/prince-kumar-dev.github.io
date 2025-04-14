@@ -34,12 +34,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const dailyGoalInput = document.getElementById('daily-goal-input'); // Added
 
     // Pomodoro Elements
-    const pomodoroTimeElement = document.getElementById('pomodoro-time'); // Added
-    const pomodoroStatusElement = document.getElementById('pomodoro-status'); // Added
-    const pomodoroStartPauseBtn = document.getElementById('pomodoro-start-pause'); // Added
-    const pomodoroResetBtn = document.getElementById('pomodoro-reset'); // Added
-    const pomodoroModeBtns = document.querySelectorAll('.mode-btn'); // Added
-    // const pomodoroCompleteSound = document.getElementById('pomodoro-complete-sound'); // Optional audio
+    const pomodoroTimeElement = document.getElementById('pomodoro-time');
+    const pomodoroStatusElement = document.getElementById('pomodoro-status');
+    const pomodoroStartPauseBtn = document.getElementById('pomodoro-start-pause');
+    const pomodoroResetBtn = document.getElementById('pomodoro-reset');
+    const pomodoroModeBtns = document.querySelectorAll('.mode-btn');
+    const pomodoroAlarmSound = document.getElementById('pomodoro-alarm-sound');
+    const pomodoroAlarmControls = document.querySelector('.pomodoro-alarm-controls'); // <-- Get controls container
+    const pomodoroPauseAlarmBtn = document.getElementById('pomodoro-pause-alarm'); // <-- Get pause button
+    const pomodoroStopAlarmBtn = document.getElementById('pomodoro-stop-alarm');   // <-- Get stop button
+
+    // --- Default Data & State (Add/Modify) ---
+    // ... (other state variables)
+    
 
     // --- Default Data & State (Add/Modify) ---
     const DEFAULT_SHORTCUTS = [
@@ -63,11 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let dailyGoal = { text: '', date: '' }; // Added
 
     // Pomodoro State
-    const POMODORO_TIMES = { work: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 }; // Seconds
+    const POMODORO_TIMES = { work: 25 * 60, shortBreak: 0.1 * 60, longBreak: 15 * 60 }; // Seconds
     let pomodoroInterval = null;
     let pomodoroTimeLeft = POMODORO_TIMES.work;
     let pomodoroCurrentMode = 'work'; // 'work', 'shortBreak', 'longBreak'
     let pomodoroIsRunning = false;
+    let pomodoroIsAlarmPlaying = false; // <-- Track if alarm is active
+    let pomodoroNextModeTimeoutId = null; // <-- Store timeout ID for mode switch
 
     // --- Utility Functions ---
     const getLocalStorage = (key, defaultValue) => {
@@ -309,46 +318,211 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePomodoroStatus(statusText = '') {
          if (!pomodoroStatusElement) return; // Add check
          if (statusText) { pomodoroStatusElement.textContent = statusText; }
-         else { pomodoroStatusElement.textContent = pomodoroIsRunning ? `${pomodoroCurrentMode.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase())} in progress...` : 'Ready'; }
+         else {
+             const modeText = pomodoroCurrentMode.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+             pomodoroStatusElement.textContent = pomodoroIsRunning ? `${modeText} in progress...` : `Ready for ${modeText}`;
+         }
     }
     function switchPomodoroMode(newMode) {
-        if (pomodoroIsRunning) stopPomodoroTimer(); pomodoroCurrentMode = newMode; pomodoroTimeLeft = POMODORO_TIMES[newMode];
+        stopAlarmCompletely(); // Stop any lingering alarm sound/controls when switching mode
+        if (pomodoroIsRunning) stopPomodoroTimer();
+        pomodoroCurrentMode = newMode;
+        pomodoroTimeLeft = POMODORO_TIMES[newMode];
         pomodoroModeBtns.forEach(btn => { btn.classList.toggle('active', btn.dataset.mode === newMode); });
-        updatePomodoroDisplay(); updatePomodoroStatus(); document.body.classList.remove('work-mode', 'break-mode');
-        if (newMode === 'work') document.body.classList.add('work-mode'); else document.body.classList.add('break-mode');
+        updatePomodoroDisplay();
+        updatePomodoroStatus();
+        document.body.classList.remove('work-mode', 'break-mode');
+        if (newMode === 'work') document.body.classList.add('work-mode');
+        else document.body.classList.add('break-mode');
     }
-    function startPausePomodoro() { if (pomodoroIsRunning) { pausePomodoroTimer(); } else { startPomodoroTimer(); } }
+
+    function startPausePomodoro() {
+        stopAlarmCompletely(); // Ensure alarm is off if user manually starts/pauses timer
+        if (pomodoroIsRunning) {
+             pausePomodoroTimer();
+        } else {
+             startPomodoroTimer();
+        }
+    }
+
+    // Function to update the pause/resume button state
+    function updatePauseResumeButton(isPaused) {
+        if (pomodoroPauseAlarmBtn) {
+            if (isPaused) {
+                pomodoroPauseAlarmBtn.innerHTML = '<i class="fas fa-volume-up"></i> Resume Alarm';
+                pomodoroPauseAlarmBtn.title = 'Resume Alarm Sound';
+            } else {
+                pomodoroPauseAlarmBtn.innerHTML = '<i class="fas fa-volume-mute"></i> Pause Alarm';
+                pomodoroPauseAlarmBtn.title = 'Pause Alarm Sound';
+            }
+        }
+    }
+
     function startPomodoroTimer() {
-        if (pomodoroIsRunning || !pomodoroStartPauseBtn) return; // Add check
-        pomodoroIsRunning = true; pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-pause"></i>'; pomodoroStartPauseBtn.classList.add('running'); updatePomodoroStatus();
+        if (pomodoroIsRunning || !pomodoroStartPauseBtn) return;
+        stopAlarmCompletely(); // Ensure previous alarm state is cleared
+        pomodoroIsRunning = true;
+        pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        pomodoroStartPauseBtn.classList.add('running');
+        updatePomodoroStatus();
+
         pomodoroInterval = setInterval(() => {
-            pomodoroTimeLeft--; updatePomodoroDisplay();
+            pomodoroTimeLeft--;
+            updatePomodoroDisplay();
+
             if (pomodoroTimeLeft <= 0) {
-                stopPomodoroTimer();
-                // pomodoroCompleteSound?.play().catch(e => console.warn("Audio play failed:", e));
+                // Timer finished
+                stopPomodoroTimer(); // Stop the interval
+
+                // --- Alarm Sound Logic ---
+                if (pomodoroAlarmSound) {
+                    pomodoroIsAlarmPlaying = true; // Set flag
+                    if (pomodoroAlarmControls) pomodoroAlarmControls.classList.add('visible'); // Show controls
+                    updatePauseResumeButton(false);
+
+
+                    pomodoroAlarmSound.currentTime = 0; // Rewind
+                    pomodoroAlarmSound.play().catch(e => {
+                        console.warn("Audio play failed. User interaction might be required first.", e);
+                        alert(`${pomodoroCurrentMode.replace(/([A-Z])/g, ' $1')} finished!`);
+                        stopAlarmCompletely(); // Clean up if sound fails
+                    });
+                } else {
+                     alert(`${pomodoroCurrentMode.replace(/([A-Z])/g, ' $1')} finished!`);
+                     stopAlarmCompletely(); // Clean up if sound element doesn't exist
+                }
+                // --- End Alarm Sound Logic ---
+
+                // Determine next mode
                 let nextMode = 'work';
-                if (pomodoroCurrentMode === 'work') { nextMode = 'shortBreak'; }
-                else if (pomodoroCurrentMode === 'shortBreak') { nextMode = 'work'; }
-                else { nextMode = 'work'; }
-                alert(`${pomodoroCurrentMode.replace(/([A-Z])/g, ' $1')} finished! Starting ${nextMode.replace(/([A-Z])/g, ' $1')}.`);
-                switchPomodoroMode(nextMode);
+                if (pomodoroCurrentMode === 'work') nextMode = 'shortBreak';
+                else if (pomodoroCurrentMode === 'shortBreak') nextMode = 'work';
+                else if (pomodoroCurrentMode === 'longBreak') nextMode = 'work';
+
+                const finishedModeText = pomodoroCurrentMode.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+                updatePomodoroStatus(`${finishedModeText} finished! Alarm playing...`);
+
+                // Schedule the mode switch, store the ID
+                clearTimeout(pomodoroNextModeTimeoutId); // Clear any previous pending switch
+                pomodoroNextModeTimeoutId = setTimeout(() => {
+                    if (pomodoroIsAlarmPlaying) { // Only auto-switch if alarm wasn't manually stopped
+                       stopAlarmCompletely(); // Ensure alarm stops if it was still playing somehow
+                    }
+                    switchPomodoroMode(nextMode);
+                    // Optional: Auto-start next timer
+                    // startPomodoroTimer();
+                }, pomodoroAlarmSound ? pomodoroAlarmSound.duration * 1000 + 500 : 500); // Wait for sound duration + buffer, or short delay
             }
         }, 1000);
     }
+
     function pausePomodoroTimer() {
-        if (!pomodoroIsRunning || !pomodoroStartPauseBtn) return; // Add check
-        clearInterval(pomodoroInterval); pomodoroInterval = null; pomodoroIsRunning = false;
-        pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-play"></i>'; pomodoroStartPauseBtn.classList.remove('running'); updatePomodoroStatus('Paused');
+        if (!pomodoroIsRunning || !pomodoroStartPauseBtn) return;
+        clearInterval(pomodoroInterval);
+        pomodoroInterval = null;
+        pomodoroIsRunning = false;
+        pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        pomodoroStartPauseBtn.classList.remove('running');
+        updatePomodoroStatus('Paused');
     }
-    function resetPomodoroTimer() { stopPomodoroTimer(); pomodoroTimeLeft = POMODORO_TIMES[pomodoroCurrentMode]; updatePomodoroDisplay(); updatePomodoroStatus(); }
+
+    function resetPomodoroTimer() {
+        stopAlarmCompletely(); // Stop alarm sound/controls on reset
+        stopPomodoroTimer();
+        pomodoroTimeLeft = POMODORO_TIMES[pomodoroCurrentMode];
+        updatePomodoroDisplay();
+        updatePomodoroStatus();
+    }
+
     function stopPomodoroTimer() {
-        clearInterval(pomodoroInterval); pomodoroInterval = null; pomodoroIsRunning = false;
-        if (pomodoroStartPauseBtn) { pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-play"></i>'; pomodoroStartPauseBtn.classList.remove('running'); }
+        clearInterval(pomodoroInterval);
+        pomodoroInterval = null;
+        pomodoroIsRunning = false;
+        if (pomodoroStartPauseBtn) {
+            pomodoroStartPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            pomodoroStartPauseBtn.classList.remove('running');
+        }
+        // Don't stop alarm here necessarily, let specific actions decide
     }
+
+    // --- NEW: Function to completely stop the alarm and cleanup ---
+    function stopAlarmCompletely() {
+        clearTimeout(pomodoroNextModeTimeoutId); // Cancel pending mode switch
+        pomodoroNextModeTimeoutId = null;
+
+        if (pomodoroAlarmSound && pomodoroIsAlarmPlaying) {
+            pomodoroAlarmSound.pause();
+            pomodoroAlarmSound.currentTime = 0;
+        }
+        pomodoroIsAlarmPlaying = false;
+        if (pomodoroAlarmControls) {
+            pomodoroAlarmControls.classList.remove('visible'); // Hide controls
+        }
+        updatePauseResumeButton(false);
+    }
+
+    // --- Event Listeners for Pomodoro ---
     if (pomodoroStartPauseBtn) pomodoroStartPauseBtn.addEventListener('click', startPausePomodoro);
     if (pomodoroResetBtn) pomodoroResetBtn.addEventListener('click', resetPomodoroTimer);
     pomodoroModeBtns.forEach(btn => { btn.addEventListener('click', () => switchPomodoroMode(btn.dataset.mode)); });
-    updatePomodoroDisplay(); updatePomodoroStatus(); switchPomodoroMode('work');
+
+    // --- MODIFIED: Event Listener for Pause/Resume Alarm Button ---
+    if (pomodoroPauseAlarmBtn) {
+        pomodoroPauseAlarmBtn.addEventListener('click', () => {
+            // Only act if the alarm *should* be playing and the element exists
+            if (pomodoroIsAlarmPlaying && pomodoroAlarmSound) {
+                if (pomodoroAlarmSound.paused) {
+                    // It's paused, so RESUME
+                    pomodoroAlarmSound.play().catch(e => { // Added catch for safety
+                         console.warn("Audio resume failed.", e);
+                         // Optionally handle resume failure, maybe stop the alarm?
+                         stopAlarmCompletely();
+                    });
+                    updatePauseResumeButton(false); // Set button back to "Pause"
+                    updatePomodoroStatus('Alarm playing...'); // Update status
+                } else {
+                    // It's playing, so PAUSE
+                    pomodoroAlarmSound.pause();
+                    updatePauseResumeButton(true); // Set button to "Resume"
+                    updatePomodoroStatus('Alarm Sound Paused'); // Update status
+                }
+            }
+        });
+    }
+
+    // --- Event Listener for Stop Alarm Button ---
+    if (pomodoroStopAlarmBtn) {
+        pomodoroStopAlarmBtn.addEventListener('click', () => {
+            stopAlarmCompletely(); // Use the central cleanup function
+            const finishedModeText = pomodoroCurrentMode.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+            let nextMode = 'work';
+            if (pomodoroCurrentMode === 'work') nextMode = 'shortBreak';
+            const nextModeText = nextMode.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+            updatePomodoroStatus(`${finishedModeText} Finished. Alarm stopped. Press Play for ${nextModeText}.`);
+        });
+    }
+
+    // --- Event Listener for when the sound finishes playing naturally ---
+    if (pomodoroAlarmSound) {
+        pomodoroAlarmSound.addEventListener('ended', () => {
+             // Only run cleanup if the alarm was supposed to be playing
+             // This check prevents issues if 'ended' fires unexpectedly
+             if (pomodoroIsAlarmPlaying) {
+                 pomodoroIsAlarmPlaying = false; // Sound finished
+                 if (pomodoroAlarmControls) {
+                    pomodoroAlarmControls.classList.remove('visible'); // Hide controls
+                 }
+                 updatePauseResumeButton(false); // <<< Reset button state
+                 // The automatic mode switch will still happen via the timeout set earlier
+                 updatePomodoroStatus(`${pomodoroCurrentMode.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase())} Finished. Preparing next mode...`);
+             }
+        });
+    }
+
+
+
+    // Initial setup
+    switchPomodoroMode('work');
 
     // 8. Weather Widget
     function fetchWeather(options = {}) {
