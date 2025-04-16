@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Pomodoro State
   const POMODORO_TIMES = {
     work: 25 * 60,
-    shortBreak: 1 * 60,
+    shortBreak: 5 * 60,
     longBreak: 15 * 60,
   }; // Seconds
   let pomodoroInterval = null;
