@@ -533,7 +533,7 @@ input:checked + .slider:before {
   gap: 1.75rem; /* Increased gap */
   width: 100%;
   max-width: 900px;
-  margin-bottom: -5rem; /* Increased spacing */
+  margin-bottom: -3rem; /* Increased spacing */
 }
 .widget {
   background-color: var(--widget-bg);
